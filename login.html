@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- BUSQUE POR ESSAS LINHAS NO INÍCIO DO SEU HTML E COLE ESTE BLOCO -->
+    <title>Login</title>
+    
+    <!-- ÍCONE DA TACINHA VERDE EM ALTA DEFINIÇÃO (MÁGICA DO SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9H4.5a2.5 2.5 0 0 1 0-5H6'/><path d='M18 9h1.5a2.5 2.5 0 0 0 0-5H18'/><path d='M4 22h16'/><path d='M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34'/><path d='M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z'/></svg>">
+
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-left-side">
+            <div class="slideshow-container">
+                <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1200" alt="Torcida Clássica de Copa" class="slide active">
+                <img src="https://images.unsplash.com/photo-1543351611-58f69d7c1781?q=80&w=1200" alt="Bola Clássica de Couro" class="slide">
+            </div>
+            <div class="bottom-fade"></div>
+            <div class="logo-container">
+                <div class="logo-header-inline">
+                    <div class="trophy-icon">
+                        <i data-lucide="trophy" style="width: 28px; height: 28px; color: var(--accent-color);"></i>
+                    </div>
+                    <h1>Bolão Família sem Falsidade</h1>
+                </div>
+                <p>Faça seus palpites, acompanhe o ranking em tempo real e viva a emoção da Copa!</p>
+            </div>
+        </div>
+
+        <div class="login-right-side">
+            <div id="connection-status" class="demo-badge">
+                <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+                <span id="status-text">Conectado</span>
+            </div>
+
+            <div class="login-card">
+                <div class="login-header">
+                    <h2>Acesso ao Bolão</h2>
+                    <p>Entre com suas credenciais para acessar sua conta.</p>
+                </div>
+
+                <div id="alert-box" class="alert-box hidden" style="color: #ff4444; background: #ffe6e6; padding: 10px; border-radius: 6px; margin-bottom: 15px; text-align: center; font-size: 14px;"></div>
+
+                <form id="form-login">
+                    <div class="form-group">
+                        <label for="login-email">E-mail</label>
+                        <input type="email" id="login-email" required placeholder="seu@email.com" autocomplete="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Senha</label>
+                        <div class="password-container">
+                            <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
+                            <button type="button" id="btn-toggle-password" class="toggle-password-btn">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login" id="btn-submit-text">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+
+    <script type="module">
+        // Importa o cliente do Supabase do seu arquivo de configuração centralizado
+        import { supabase } from "./supabase-config.js";
+
+        // Lógica do botão de ocultar/mostrar senha
+        const btnTogglePassword = document.getElementById('btn-toggle-password');
+        const inputPassword = document.getElementById('login-password');
+        btnTogglePassword.addEventListener('click', () => {
+            inputPassword.type = inputPassword.type === 'password' ? 'text' : 'password';
+            btnTogglePassword.innerHTML = inputPassword.type === 'password' ? '<i data-lucide="eye"></i>' : '<i data-lucide="eye-off"></i>';
+            lucide.createIcons();
+        });
+
+        // --- LÓGICA DE LOGIN COM SUPABASE ---
+        const formLogin = document.getElementById('form-login');
+        const alertBox = document.getElementById('alert-box');
+        const statusText = document.getElementById('status-text');
+        const btnSubmitText = document.getElementById('btn-submit-text');
+
+        formLogin.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            alertBox.classList.add('hidden');
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            statusText.textContent = "Autenticando...";
+            btnSubmitText.textContent = "Entrando...";
+            btnSubmitText.disabled = true;
+
+            try {
+                // Passo 1: Autentica o usuário no Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (authError) {
+                    // Tratamento rigoroso de erros do Supabase Auth em português
+                    if (authError.status === 400 || authError.message.includes("Invalid login credentials")) {
+                        alertBox.textContent = "E-mail ou senha incorretos.";
+                    } else if (authError.status === 429) {
+                        alertBox.textContent = "Muitas tentativas. Por favor, aguarde um momento.";
+                    } else {
+                        alertBox.textContent = "Erro ao autenticar: " + authError.message;
+                    }
+                    alertBox.classList.remove('hidden');
+                    return;
+                }
+
+                statusText.textContent = "Buscando permissões...";
+
+                // Passo 2: Busca a Role do usuário na tabela pública "users"
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('role')
+                    .eq('email', email)
+                    .single();
+
+                if (userError || !userData) {
+                    alertBox.textContent = "Usuário autenticado, mas nenhum registro de perfil foi localizado.";
+                    alertBox.classList.remove('hidden');
+                    // Opcional: Desloga se não tiver a tabela sincronizada
+                    // await supabase.auth.signOut(); 
+                    return;
+                }
+
+                statusText.textContent = "Acesso autorizado!";
+                const role = userData.role;
+
+                // Salva o e-mail do usuário na sessão para o painel identificá-lo
+                sessionStorage.setItem("loggedUserEmail", email)
+
+                // Passo 3: Redireciona de acordo com o nível de acesso (Role)
+                if (role === 'admin') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'painel.html';
+                }
+
+            } catch (error) {
+                console.error("Erro inesperado no fluxo de login:", error);
+                alertBox.textContent = "Ocorreu um problema de conexão. Verifique sua internet.";
+                alertBox.classList.remove('hidden');
+            } finally {
+                statusText.textContent = "Conectado";
+                btnSubmitText.textContent = "Login";
+                btnSubmitText.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

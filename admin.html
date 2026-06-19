@@ -1,0 +1,2781 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <!-- BUSQUE POR ESSAS LINHAS NO INÍCIO DO SEU HTML E COLE ESTE BLOCO -->
+    <title>Admin | Família S.F.</title>
+    
+    <!-- ÍCONE DA TACINHA VERDE EM ALTA DEFINIÇÃO (MÁGICA DO SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9H4.5a2.5 2.5 0 0 1 0-5H6'/><path d='M18 9h1.5a2.5 2.5 0 0 0 0-5H18'/><path d='M4 22h16'/><path d='M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34'/><path d='M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z'/></svg>">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ==========================================================================
+        VARIÁVEIS DE CORES & CONFIGURAÇÕES GERAIS
+        ========================================================================== */
+        :root {
+            --bg-dark: #050806;
+            --card-dark: #0c120e;
+            --card-glass: rgba(12, 18, 14, 0.75);
+            --input-bg: #141e18;
+            --input-border: #1d2e24;
+            --text-main: #f8f9fa;
+            --text-muted: #94a3b8;
+            --accent-color: #10b981;
+            --accent-hover: #059669;
+            --gold-color: #f59e0b;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; min-width: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--input-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+        .admin-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; max-width: 100vw; overflow-x: hidden; }
+
+        .sidebar { background-color: var(--card-dark); border-right: 1px solid rgba(16, 185, 129, 0.1); display: flex; flex-direction: column; padding: 2rem 1.5rem; position: sticky; top: 0; height: 100vh; z-index: 100; }
+        .sidebar-brand { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 3rem; }
+        .sidebar-brand h1 { font-size: 1.15rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; }
+        
+        .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+        .menu-item { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1rem; color: var(--text-muted); text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; }
+        .menu-item:hover, .menu-item.active { color: var(--text-main); background-color: rgba(16, 185, 129, 0.1); }
+        .menu-item.active { border-left: 3px solid var(--accent-color); background-color: rgba(16, 185, 129, 0.15); }
+        .sidebar-footer { margin-top: auto; border-top: 1px solid rgba(16, 185, 129, 0.1); padding-top: 1.5rem; }
+        .user-profile { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-color) 0%, #064e3b 100%); display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid rgba(16, 185, 129, 0.3); flex-shrink: 0; cursor: pointer; transition: transform 0.2s ease, filter 0.2s ease; }
+        .user-avatar:hover { transform: scale(1.05); filter: brightness(1.2); }
+        .user-info h3 { font-size: 0.9rem; font-weight: 600; }
+        .user-info p { font-size: 0.75rem; color: var(--text-muted); word-break: break-all; }
+
+        .main-content { padding: 2.5rem; overflow-y: auto; overflow-x: hidden; height: 100vh; width: 100%; max-width: 100vw; }
+        
+        .header-dashboard { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1.5rem; width: 100%; }
+        .welcome-title h2 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.25rem; }
+        .welcome-title p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; width: 100%; }
+        .stat-card { background-color: var(--card-dark); border: 1px solid rgba(16, 185, 129, 0.08); border-radius: 12px; padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+        .stat-card.open-state { background-color: rgba(16, 185, 129, 0.03); border-color: rgba(16, 185, 129, 0.25); box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08); }
+        .stat-card.locked-state { background-color: rgba(239, 68, 68, 0.03); border-color: rgba(239, 68, 68, 0.25); box-shadow: 0 4px 20px rgba(239, 68, 68, 0.08); }
+        .stat-card:hover { transform: translateY(-2px); }
+        .stat-icon { padding: 1rem; background-color: rgba(16, 185, 129, 0.08); border-radius: 10px; color: var(--accent-color); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; flex-shrink: 0; }
+        .stat-icon.locked-icon { background-color: rgba(239, 68, 68, 0.08); color: var(--danger-color); }
+        .stat-info p { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
+        .stat-info h4 { font-size: 1.5rem; font-weight: 700; }
+
+        .pill-switch { position: relative; display: block; background: #141e18; border: 1px solid var(--input-border); border-radius: 30px; width: 110px; height: 32px; cursor: pointer; overflow: hidden; user-select: none; transition: all 0.3s ease; flex-shrink: 0; min-width: 110px; max-width: 110px; }
+        .pill-switch .switch-handle { position: absolute; top: 3px; bottom: 3px; width: 51px; border-radius: 20px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1; }
+        .pill-switch.open .switch-handle { left: 54px; background-color: var(--accent-color); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4); }
+        .pill-switch.locked .switch-handle { left: 3px; background-color: var(--danger-color); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); }
+        .pill-switch .switch-option { position: absolute; top: 3px; bottom: 3px; font-size: 0.58rem; font-weight: 900; text-transform: uppercase; z-index: 2; transition: opacity 0.2s ease, transform 0.2s ease; letter-spacing: 0.5px; pointer-events: none; width: 51px; text-align: center; display: flex; align-items: center; justify-content: center; }
+        .pill-switch .option-open { left: 54px; }
+        .pill-switch .option-locked { left: 3px; }
+        .pill-switch.open .option-open { opacity: 1; color: #ffffff; transform: scale(1); }
+        .pill-switch.open .option-locked { opacity: 0; transform: scale(0.85); }
+        .pill-switch.locked .option-open { opacity: 0; transform: scale(0.85); }
+        .pill-switch.locked .option-locked { opacity: 1; color: #ffffff; transform: scale(1); }
+
+        .next-match-banner { position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; padding: 2.25rem 3rem; min-height: 180px; background-color: var(--card-dark); border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 16px; margin-bottom: 1rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 100%; max-width: 100%;}
+        .banner-team { position: relative; flex: 1; display: flex; align-items: center; gap: 1.5rem; z-index: 2; }
+        .banner-team.team-a { justify-content: flex-start; text-align: left; }
+        .banner-team.team-b { justify-content: flex-end; text-align: right; }
+        .banner-team-name { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
+        .banner-team-flag { font-size: 3.5rem; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); user-select: none; }
+        .banner-vs-container { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 2rem; min-width: 150px; }
+        .banner-vs { font-size: 1.15rem; font-weight: 900; color: var(--gold-color); background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.35); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(245, 158, 11, 0.25); margin-bottom: 0.6rem; }
+        .banner-match-info { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; color: var(--text-muted); text-align: center; display: flex; flex-direction: column; gap: 0.2rem; }
+        .banner-match-date { color: var(--gold-color); font-weight: 700; }
+        .banner-bg-flag { position: absolute; top: 0; bottom: 0; width: 50%; z-index: 1; opacity: 0.28; pointer-events: none; background-size: cover; background-position: center; }
+        .banner-bg-flag.flag-a { left: -120px; width: calc(50% + 120px); background-position: left center; background-repeat: no-repeat; mask-image: linear-gradient(to right, black 25%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 25%, transparent 100%); }
+        .banner-bg-flag.flag-b { right: 0; background-position: right center; background-repeat: no-repeat; mask-image: linear-gradient(to left, black 25%, transparent 100%); -webkit-mask-image: linear-gradient(to left, black 25%, transparent 100%); }
+
+        .tab-panel { display: none; animation: fadeIn 0.3s ease; width: 100%; max-width: 100%; }
+        .tab-panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; width: 100%; }
+        .glass-box { background-color: var(--card-dark); border: 1px solid rgba(16, 185, 129, 0.08); border-radius: 16px; padding: 2rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); margin-bottom: 1rem; width: 100%; max-width: 100%; overflow: hidden; }
+        .box-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(16, 185, 129, 0.08); padding-bottom: 0.75rem; width: 100%; }
+        .box-header h3 { font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 0.6rem; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; width: 100%; }
+        .form-inline { display: flex; align-items: flex-end; gap: 1.25rem; margin-bottom: 1.25rem; width: 100%; }
+        .form-inline .form-group { flex: 1; margin-bottom: 0; }
+        .form-inline .vs { color: var(--text-muted); font-weight: 800; font-size: 1.1rem; padding-bottom: 0.75rem; align-self: flex-end; flex-shrink: 0; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 1.25rem; width: 100%; }
+        .form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group select { width: 100%; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text-main); font-size: 0.95rem; outline: none; transition: all 0.2s ease; }
+        .form-group input[type="file"] { display: none; }
+        .file-upload-label { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; background-color: var(--input-bg); border: 1px dashed var(--input-border); color: var(--accent-color); border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; text-align: center; }
+        .file-upload-label:hover { border-color: var(--accent-color); background-color: rgba(16, 185, 129, 0.05); }
+        .form-group select { padding-right: 2.5rem; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.25rem; font-size: 0.95rem; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
+        .btn-primary { background-color: var(--accent-color); color: white; }
+        .btn-primary:hover { background-color: var(--accent-hover); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--input-border); color: var(--text-main); }
+        .btn-outline:hover { background-color: rgba(16, 185, 129, 0.08); border-color: var(--accent-color); }
+        .btn-danger { background-color: transparent; border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger-color); }
+        .btn-danger:hover { background-color: rgba(239, 68, 68, 0.1); border-color: var(--danger-color); }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; border-radius: 6px; }
+
+        .filter-scroller { display: flex; flex-wrap: nowrap; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.75rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(16, 185, 129, 0.04); -webkit-overflow-scrolling: touch; scrollbar-width: none; max-width: 100%;}
+        .filter-scroller::-webkit-scrollbar { display: none; }
+        .filter-btn { flex-shrink: 0; white-space: nowrap; }
+
+        /* ==========================================================================
+           MODIFICAÇÕES: MATCH LIST E CARDS DAS PARTIDAS
+        ========================================================================== */
+        .matches-list { display: flex; flex-direction: column; gap: 1rem; max-height: 550px; overflow-y: auto; overflow-x: hidden; padding-right: 0.5rem; width: 100%;}
+        
+        .match-card { background-color: var(--card-dark); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 12px; padding: 1.25rem; transition: all 0.2s ease; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.2);}
+        .match-card:hover { border-color: rgba(16, 185, 129, 0.4); transform: translateY(-2px); }
+        .match-card.finished-match { background-color: rgba(16, 185, 129, 0.03); border-left: 4px solid var(--accent-color); opacity: 0.85; }
+        
+        .match-info-tag { font-size: 0.7rem; font-weight: 700; background-color: rgba(16, 185, 129, 0.1); color: var(--accent-color); padding: 0.25rem 0.6rem; border-radius: 20px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .match-teams { display: flex; align-items: center; justify-content: center; gap: 1.25rem; width: 100%; margin: 0.5rem 0; }
+        .team { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.15rem; }
+        .team img { border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .match-versus { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; background: rgba(255,255,255,0.05); padding: 0.2rem 0.5rem; border-radius: 4px; }
+        
+        .score-badge-display { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 0.5rem 1rem; min-width: 100px; }
+        .score-badge-display.finished { border-color: var(--accent-color); box-shadow: 0 0 10px rgba(16, 185, 129, 0.1); }
+        .score-badge-val { font-weight: 900; font-size: 1.25rem; color: var(--text-main); min-width: 15px; text-align: center; }
+
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+        .custom-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; }
+        .custom-table th { padding: 1rem; font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--input-border); white-space: nowrap; }
+        .custom-table td { padding: 1.1rem 1rem; border-bottom: 1px solid rgba(16, 185, 129, 0.04); font-size: 0.95rem; vertical-align: middle; white-space: nowrap; }
+        .custom-table tr:hover td { background-color: rgba(16, 185, 129, 0.02); }
+
+        .badge { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.7rem; border-radius: 20px; }
+        .badge-success { background-color: rgba(16, 185, 129, 0.1); color: var(--accent-color); }
+        .badge-pending { background-color: rgba(245, 158, 11, 0.1); color: var(--gold-color); }
+
+        .custom-multiselect { position: relative; width: 100%; }
+        .ms-header-container { display: flex; flex-wrap: wrap; gap: 0.4rem; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 0.5rem 0.75rem; min-height: 44px; cursor: text; align-items: center; transition: border-color 0.2s; width: 100%;}
+        .ms-header-container:focus-within { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+        .ms-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .ms-tag { background-color: rgba(16, 185, 129, 0.15); color: var(--accent-color); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem; cursor: pointer; transition: all 0.2s ease; }
+        .ms-tag:hover { background-color: rgba(239, 68, 68, 0.15); color: var(--danger-color); }
+        .ms-search-input { flex: 1; min-width: 120px; background: transparent; border: none; color: var(--text-main); font-size: 0.9rem; outline: none; padding: 0.2rem; }
+        .ms-search-input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .multiselect-dropdown { position: absolute; top: 100%; left: 0; right: 0; background-color: var(--card-dark); border: 1px solid var(--input-border); border-radius: 8px; max-height: 220px; overflow-y: auto; z-index: 50; display: none; margin-top: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .multiselect-dropdown.show { display: block; }
+        .multiselect-item { padding: 0.7rem 1rem; display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.9rem; color: var(--text-main); border-bottom: 1px solid rgba(16, 185, 129, 0.05); transition: background-color 0.2s; }
+        .multiselect-item:hover { background-color: rgba(16, 185, 129, 0.1); }
+        .multiselect-item.selected { background-color: rgba(16, 185, 129, 0.08); border-left: 3px solid var(--accent-color); color: var(--accent-color); font-weight: 700; }
+
+        .pagination-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(16, 185, 129, 0.08); flex-wrap: wrap; gap: 1rem; width: 100%;}
+        .pagination-info { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
+        .pagination-buttons { display: flex; gap: 0.5rem; }
+        .pagination-buttons button { padding: 0.4rem 0.6rem; }
+        .pagination-buttons button:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--input-border); color: var(--text-muted); }
+
+        .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; display: flex; flex-direction: column; gap: 0.75rem; }
+        .toast { background-color: var(--card-dark); border: 1px solid rgba(16, 185, 129, 0.2); color: var(--text-main); padding: 1rem 1.5rem; border-radius: 10px; box-shadow: 0 10px 35px rgba(0,0,0,0.8); display: flex; align-items: center; gap: 0.75rem; min-width: 300px; animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideInRight { from { transform: translateX(120%); } to { transform: translateX(0); } }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 1rem; }
+        .modal-overlay.open { opacity: 1; pointer-events: auto; }
+        .modal-card { background-color: var(--card-dark); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 16px; padding: 2.25rem; width: 100%; max-width: 480px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: left; transform: scale(0.9); transition: transform 0.3s ease; overflow-y: auto; overflow-x: hidden; max-height: 90vh; }
+        .modal-card.modal-large { max-width: 600px; }
+        .modal-overlay.open .modal-card { transform: scale(1); }
+        .modal-icon { width: 56px; height: 56px; background-color: rgba(239, 68, 68, 0.1); color: var(--danger-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; }
+        .modal-card h3 { font-size: 1.3rem; margin-bottom: 0.75rem; }
+        .modal-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; }
+        .modal-actions { display: flex; gap: 1rem; justify-content: center; width: 100%; }
+
+        .players-scroll-list { max-height: 250px; overflow-y: auto; overflow-x: hidden; border: 1px solid var(--input-border); border-radius: 8px; background: rgba(20, 30, 24, 0.2); padding: 0.5rem; margin-top: 1.25rem; width: 100%; }
+        .player-item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.8rem; border-bottom: 1px solid rgba(16, 185, 129, 0.05); }
+        .player-item-row:last-child { border-bottom: none; }
+        .player-item-info { display: flex; align-items: center; gap: 0.75rem; }
+        .player-avatar-small { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(16, 185, 129, 0.2); background-color: var(--input-bg); flex-shrink: 0; }
+
+        @keyframes popIn { 0% { transform: scale(0.85); opacity: 0.6; } 100% { transform: scale(1); opacity: 1; } }
+        .pop-icon { animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .date-group-header { display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0 0.75rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(16, 185, 129, 0.15); color: var(--accent-color); font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .date-group-header:first-child { margin-top: 0; }
+
+        /* ==========================================================================
+           ESTILOS EXCLUSIVOS PARA ESTATÍSTICAS E PALPITES DA PARTIDA
+        ========================================================================== */
+        .match-stats-container {
+            width: 100%;
+            margin-top: 1.25rem;
+            padding-top: 1.25rem;
+            border-top: 1px dashed var(--input-border);
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .match-stats-container.expanded { display: block; }
+
+        .stats-bars-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .stat-bar-box {
+            background: rgba(20, 30, 24, 0.5);
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+        }
+        .stat-bar-box p { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.25rem; }
+        .stat-bar-box span { font-size: 1.2rem; font-weight: 800; color: var(--accent-color); }
+
+        .bets-users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+        .bet-user-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .bet-user-info { display: flex; align-items: center; gap: 0.5rem; }
+        .bet-user-score { font-weight: 800; color: var(--gold-color); background: rgba(245, 158, 11, 0.1); padding: 0.2rem 0.6rem; border-radius: 4px; }
+
+        /* ===========================================================
+            Novo css dos filtros de gerencimento de partidas
+        ============================================================= */
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-wrapper input {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .custom-select-wrapper input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+        .dropdown-icon {
+            display: none;
+        }
+
+        .custom-select-wrapper input {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+
+        .custom-dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: var(--card-dark);
+            border: 1px solid var(--input-border);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5)
+        }
+
+        .custom-dropdown-list.show {
+            display: block;
+        }
+
+        .ms-option {
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(16, 185, 129, 0.05);
+            transition: background-color 0.2s;
+        }
+
+        .ms-option:hover {
+            background-color: rgba(16, 185, 129, 0.01);
+        }
+
+        .ms-option.selected {
+            background-color: rgba(16, 185, 129, 0.08);
+            border-left: 3px solid var(--accent-color);
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .filter-tag {
+            background-color: rgba(0, 255, 128, 0.1);
+            color: var(--accent-color, #00ff80);
+            border: 1px solid var(--accent-color, #00ff80);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .filter-tag span {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1;
+        }
+        .filter-tag span:hover {
+            color: #ffffff;
+        }
+
+        .match-filters-panel {
+            display: none;
+        }
+        .match-filters-panel.open {
+            display: block;
+        }
+
+        /* ==========================================================================
+           AJUSTES RESPONSIVOS MOBILE
+        ========================================================================== */
+        .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .mobile-topbar { display: none; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; background-color: var(--card-dark); border-bottom: 1px solid rgba(16, 185, 129, 0.1); position: sticky; top: 0; z-index: 50; width: 100vw; }
+        .mobile-topbar h1 { font-size: 1.15rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 40%, var(--accent-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.2; margin:0;}
+
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background-color: var(--card-dark); border-top: 1px solid var(--input-border); z-index: 80; padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom)) 0.5rem; justify-content: space-around; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); width: 100vw;}
+        .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; color: var(--text-muted); text-decoration: none; font-size: 0.65rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; padding: 0.5rem; border-radius: 8px; flex:1;}
+        .mobile-nav-item:hover, .mobile-nav-item.active { color: var(--accent-color); }
+        .mobile-nav-item i { width: 22px; height: 22px; }
+
+        @media (max-width: 900px) {
+            .admin-layout { grid-template-columns: 1fr; } 
+            .sidebar { display: none !important; }
+            .sidebar-overlay { display: none !important; }
+            .mobile-topbar { display: flex; }
+            .mobile-nav { display: flex; }
+            .main-content {
+                padding: 1.5rem 0.75rem 100px 0.75rem;
+                height: auto;
+                overflow-x: hidden;
+                width: 100%;
+                max-width: 100vw;
+            }
+            .glass-box {
+                padding: 1.5rem 1rem;
+                width: 100%;
+                border-radius: 12px;
+                margin-bottom: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-responsive { overflow: visible; }
+            .custom-table { min-width: 100% !important; border: none; }
+            .custom-table thead { display: none; }
+            .custom-table tbody, .custom-table tr, .custom-table td { display: block; width: 100%; }
+            
+            .custom-table tr {
+                background: rgba(20, 30, 24, 0.4);
+                border: 1px solid rgba(16, 185, 129, 0.15);
+                border-radius: 12px;
+                margin-bottom: 1rem;
+                padding: 1rem;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            }
+            .custom-table td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+                border-bottom: 1px dashed rgba(16, 185, 129, 0.08);
+                padding: 0.75rem 0;
+            }
+            
+            .custom-table td:last-child { border-bottom: none; padding-bottom: 0; margin-top: 0.5rem; }
+            #teams-table td:last-child, #users-table td:last-child { justify-content: center; }
+            
+            .custom-table td::before { 
+                font-size: 0.75rem; font-weight: 700; color: var(--text-muted); 
+                text-transform: uppercase; margin-right: 1rem; text-align: left; 
+            }
+
+            #ranking-table td:nth-child(1)::before { content: "Posição"; }
+            #ranking-table td:nth-child(2)::before { content: "Membro"; }
+            #ranking-table td:nth-child(3)::before { content: "Pontos"; color: var(--accent-color); }
+            #ranking-table td:nth-child(4)::before { content: "Exatos"; }
+            #ranking-table td:nth-child(5)::before { content: "Acertos"; }
+            #ranking-table td:nth-child(6)::before { content: "Erros"; }
+
+            #teams-table td:nth-child(1)::before { content: "Sigla"; }
+            #teams-table td:nth-child(2)::before { content: "Seleção"; }
+            #teams-table td:nth-child(3)::before { content: "Grupo"; }
+            #teams-table td:nth-child(4)::before { content: "Técnico"; }
+            #teams-table td:nth-child(5)::before { content: "Opções"; display: none; }
+
+            #users-table td:nth-child(1)::before { content: "Foto"; }
+            #users-table td:nth-child(2)::before { content: "Nome"; }
+            #users-table td:nth-child(3)::before { content: "E-mail"; }
+            #users-table td:nth-child(4)::before { content: "Pontos"; }
+            #users-table td:nth-child(5)::before { content: ""; display: none;}
+        }
+
+        @media (max-width: 650px) {
+            .form-row { grid-template-columns: 1fr; gap: 1rem; }
+            .form-inline { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+            .form-inline .vs { align-self: center; padding: 0.25rem 0; }
+            
+            .box-header { flex-direction: column; align-items: stretch; gap: 1rem; text-align: center; }
+            .box-header > div { display: flex; flex-direction: column; align-items: center; width: 100%; text-align: center; }
+            .box-header h3 { justify-content: center; width: 100%; margin-bottom: 0.25rem; }
+            .box-header button { width: 100%; margin-top: 0.5rem; }
+
+            .modal-card { padding: 1.5rem; width: 100%; }
+            .modal-actions { flex-direction: column; width: 100%; }
+            .modal-actions button { width: 100%; }
+
+            .next-match-banner { flex-direction: column; gap: 1.25rem; padding: 1.5rem 1rem; text-align: center; }
+            .banner-team { justify-content: center !important; text-align: center !important; flex-direction: column; gap: 0.35rem; }
+            .banner-team-name { font-size: 1.4rem; }
+            .banner-team-flag { font-size: 2.5rem; }
+            .banner-vs-container { padding: 0; width: 100%; }
+            .banner-vs { width: 40px; height: 40px; font-size: 0.95rem; margin-bottom: 0.4rem; }
+            .banner-bg-flag { width: 100% !important; height: 50%; opacity: 0.08; }
+            .banner-bg-flag.flag-a { left: 0; width: 100%; top: 0; bottom: auto; mask-image: linear-gradient(to bottom, black 30%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%); }
+            .banner-bg-flag.flag-b { bottom: 0; top: auto; mask-image: linear-gradient(to top, black 30%, transparent 100%); -webkit-mask-image: linear-gradient(to top, black 30%, transparent 100%); }
+
+            .match-card { padding: 1rem; }
+            .match-card > div:first-child { flex-direction: column; align-items: stretch; gap: 1rem; text-align: center; }
+            .match-card > div:first-child > div { width: 100% !important; min-width: unset !important; justify-content: center; }
+            .match-teams { flex-direction: column; gap: 0.5rem; justify-content: center; width: 100%; }
+            .match-versus { margin: 0.25rem 0; }
+            .score-badge-display { width: 100%; justify-content: center; }
+            
+            /* Agrupa os botões lado a lado dividindo 50% / 50% */
+            .match-card > div:first-child > div:last-child {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between;
+                gap: 0.5rem;
+            }
+            .match-card .btn-view-stats,
+            .match-card .btn-edit-match {
+                flex: 1 !important; /* Mágica que força as larguras ficarem idênticas */
+                width: 100% !important;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .stats-grid { grid-template-columns: 1fr; }
+            .toast-container { bottom: 85px; right: 1rem; left: 1rem; align-items: center;}
+            .toast { min-width: 100%; }
+
+            #match-advanced-filters > div { grid-template-columns: 1fr !important; }
+
+            .match-filters-panel {
+                display: block;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transform: translateY(-10px);
+                transition: all 0.35s ease;
+                background: rgba(20, 30, 24, 0.4);
+                padding: 0 1.5rem;
+                border-radius: 12px;
+                border: 1px solid var(--input-border);
+                margin-bottom: 0;
+            }
+
+            .match-filters-panel.open {
+                display: block;
+                max-height: 500px;
+                opacity: 1;
+                transform: translateY(0);
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <header class="mobile-topbar">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="padding: 0.4rem; background: rgba(16, 185, 129, 0.1); border-radius: 50%;">
+                <i data-lucide="trophy" style="width: 18px; height: 18px; color: var(--accent-color);"></i>
+            </div>
+            <h1>Família S.F.</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="user-avatar admin-avatar-mobile" style="width: 32px; height: 32px; font-size: 0.8rem;">A</div>
+            <button id="btn-logout-mobile" class="btn-logout-action" style="background: none; border: none; color: var(--danger-color); cursor: pointer; display: flex; align-items: center; padding: 0.25rem;">
+                <i data-lucide="log-out" style="width: 20px; height: 20px;"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="trophy-icon" style="padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 50%;">
+                    <i data-lucide="trophy" style="width: 20px; height: 20px; color: var(--accent-color);"></i>
+                </div>
+                <h1>Família S.F.</h1>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a class="menu-item active" data-tab="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</a>
+                <a class="menu-item" data-tab="partidas"><i data-lucide="calendar"></i> Gerenciar Partidas</a>
+                <a class="menu-item" data-tab="times"><i data-lucide="shield"></i> Gerenciar Times</a>
+                <a class="menu-item" data-tab="participantes"><i data-lucide="users"></i> Participantes</a>
+                <a class="menu-item" data-tab="pontuacao"><i data-lucide="sliders"></i> Regras de Pontos</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="btn-logout-desktop" class="menu-item btn-logout-action" style="color: var(--danger-color); padding-left: 0.5rem; background: none; border: none; width: 100%; text-align: left; margin: 0;">
+                    <i data-lucide="log-out"></i> Sair do Painel
+                </button>
+            </div>
+        </aside>
+
+        <nav class="mobile-nav">
+            <a class="mobile-nav-item active" data-tab="dashboard"><i data-lucide="layout-dashboard"></i><span>Início</span></a>
+            <a class="mobile-nav-item" data-tab="partidas"><i data-lucide="calendar"></i><span>Jogos</span></a>
+            <a class="mobile-nav-item" data-tab="times"><i data-lucide="shield"></i><span>Times</span></a>
+            <a class="mobile-nav-item" data-tab="participantes"><i data-lucide="users"></i><span>Membros</span></a>
+            <a class="mobile-nav-item" data-tab="pontuacao"><i data-lucide="sliders"></i><span>Regras</span></a>
+        </nav>
+
+        <main class="main-content">
+            
+            <header class="header-dashboard">
+                <div class="welcome-title">
+                    <h2 id="welcome-text">Olá, Administrador</h2>
+                    <p>Controle os jogos, acompanhe pontuações e configure as seleções do Torneio.</p>
+                </div>
+                <div id="firebase-status" class="badge badge-success">
+                    <i data-lucide="shield-check" style="width: 14px; height: 14px;"></i> Conectado ao Supabase
+                </div>
+            </header>
+
+            <!-- ==================================================== -->
+            <!-- Dashboard -->
+            <!-- ==================================================== -->
+            <div id="tab-dashboard" class="tab-panel active">
+                <section class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i data-lucide="users"></i></div>
+                        <div class="stat-info"><p>Participantes</p><h4 id="stat-users">0 Ativos</h4></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i data-lucide="ticket"></i></div>
+                        <div class="stat-info"><p>Total de Palpites</p><h4 id="stat-bets">0 Enviados</h4></div>
+                    </div>
+                </section>
+
+                <div class="box-header" style="margin-bottom: 1rem;">
+                    <h3><i data-lucide="calendar" style="color: var(--accent-color);"></i> Próxima Partida</h3>
+                </div>
+
+                <div class="next-match-banner" id="next-match-banner-el" style="display: none;">
+                    <div class="banner-bg-flag flag-a"></div>
+                    <div class="banner-bg-flag flag-b"></div>
+                    <div class="banner-team team-a">
+                        <span class="banner-team-flag" id="banner-flag-team-a">🏴</span>
+                        <span class="banner-team-name" id="banner-name-team-a">-</span>
+                    </div>
+                    <div class="banner-vs-container">
+                        <span class="banner-vs">VS</span>
+                        <div class="banner-match-info">
+                            <span id="banner-stage-label">-</span>
+                            <span class="banner-match-date" id="banner-date-label">-</span>
+                        </div>
+                    </div>
+                    <div class="banner-team team-b">
+                        <span class="banner-team-name" id="banner-name-team-b">-</span>
+                        <span class="banner-team-flag" id="banner-flag-team-b">🏴</span>
+                    </div>
+                </div>
+                <div id="no-next-match-msg" class="glass-box" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    Nenhuma partida futura agendada ou pendente.
+                </div>
+
+                <div class="glass-box">
+                    <div class="box-header">
+                        <h3><i data-lucide="trending-up" style="color: var(--accent-color);"></i> Ranking Global</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table" id="ranking-table">
+                            <thead>
+                                <tr>
+                                    <th>Posição</th>
+                                    <th>Membro</th>
+                                    <th style="text-align: center;">Pontos</th>
+                                    <th style="text-align: center;">Placares Exatos</th>
+                                    <th style="text-align: center;">Palpites Acertados</th>
+                                    <th style="text-align: center;">Palpites Errados</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ==================================================== -->
+            <!-- Gerenciar Partidas -->
+            <!-- ==================================================== -->
+            <div id="tab-partidas" class="tab-panel">
+                <section class="stats-grid" style="margin-bottom: 1.5rem;">
+                    <div id="system-control-card" class="stat-card open-state">
+                        <div id="lock-icon-container" class="stat-icon"><i id="lock-icon" data-lucide="unlock"></i></div>
+                        <div class="stat-info" style="flex: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+                            <p style="margin: 0; font-weight: 700; font-size: 0.95rem;">Controle Geral de Palpites</p>
+                            <div id="pill-switch-control" class="pill-switch open">
+                                <div class="switch-handle"></div>
+                                <div class="switch-option option-open">Aberto</div>
+                                <div class="switch-option option-locked">Fechado</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card" style="border-color: rgba(16, 185, 129, 0.15);">
+                        <div class="stat-icon" style="color: var(--accent-color); background-color: rgba(16, 185, 129, 0.08);">
+                            <i data-lucide="plus-circle"></i>
+                        </div>
+                        <div class="stat-info" style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 1rem;">
+                            <h4 style="font-size: 1rem; font-weight: 800; color: var(--accent-color); margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">CONFRONTOS</h4>
+                            <button id="btn-open-match-modal" class="btn btn-primary btn-sm">Nova Partida</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="section-grid">
+                    <div class="left-section">
+                        <div class="glass-box">
+                            <div class="box-header">
+                                <div>
+                                    <h3><i data-lucide="gamepad-2" style="color: var(--accent-color);"></i> Lista de Confrontos</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Navegue pelas fases e lance os resultados oficiais do banco.</p>
+                                </div>
+                                <button id="btn-toggle-match-filters" class="btn btn-outline btn-sm">
+                                    <i data-lucide="filter" style="width: 16px; height: 16px;"></i> Filtros Avançados
+                                </button>
+                            </div>
+
+                            <div id="match-advanced-filters" class="match-filters-panel" >
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.25rem; align-items: flex-start;">
+                                    
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="filter-match-date">FILTRAR POR DATA:</label>
+                                        <input type="date" id="filter-match-date">
+                                    </div>
+                                    
+                                    <div class="filter-column" style="min-width: 160px;">
+                                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">FILTRAR POR SELEÇÃO:</label>
+                                        <div class="custom-select-wrapper" id="wrapper-match-teams">
+                                            <input type="text" id="ms-match-teams-input" placeholder="Buscar seleção..." autocomplete="off">
+                                            <div id="ms-match-teams-dropdown" class="custom-dropdown-list"></div>
+                                        </div>
+                                        <div id="selected-teams-tags" class="filter-tags"></div> 
+                                    </div>
+
+                                    <div class="filter-column" style="min-width: 160px;">
+                                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">FILTRAR POR GRUPO:</label>
+                                        <div class="custom-select-wrapper" id="wrapper-match-groups">
+                                            <input type="text" id="ms-match-groups-input" placeholder="Buscar grupo..." autocomplete="off">
+                                            <div id="ms-match-groups-dropdown" class="custom-dropdown-list"></div>
+                                        </div>
+                                        <div id="selected-groups-tags" class="filter-tags"></div>
+                                    </div>
+
+                                    <div class="filter-column" style="min-width: 160px;">
+                                        <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">FASE DO TORNEIO:</label>
+                                        <div class="custom-select-wrapper" id="wrapper-match-stages">
+                                            <input type="text" id="ms-match-stages-input" placeholder="Buscar fase..." autocomplete="off">
+                                            <div id="ms-match-stages-dropdown" class="custom-dropdown-list"></div>
+                                        </div>
+                                        <div id="selected-stages-tags" class="filter-tags"></div>
+                                    </div>
+
+                                    <div style="display: flex; flex-direction: column; justify-content: flex-start; height: 100%;">
+                                        <label style="font-size: 0.8rem; margin-bottom: 0.5rem; visibility: hidden;">Ação:</label>
+                                        <button id="btn-clear-match-filters" class="btn btn-outline btn-sm" style="width: 100%; height: 44px; margin: 0; display: flex; align-items: center; justify-content: center;">
+                                            <i data-lucide="filter-x" style="width: 16px; height: 16px; margin-right: 0.4rem;"></i> Limpar
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="matches-list" id="matches-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ==================================================== -->
+            <!-- Seleções -->
+            <!-- ==================================================== -->
+            <div id="tab-times" class="tab-panel">
+                <div class="section-grid">
+                    <div class="glass-box" style="margin-bottom: 1rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div style="padding: 0.5rem; background: rgba(16, 185, 129, 0.1); border-radius: 50%;">
+                                <i data-lucide="shield" style="width: 20px; height: 20px; color: var(--accent-color);"></i>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0;">Seleções Nacionais</h3>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Gerencie as equipes e elencos cadastrados.</p>
+                            </div>
+                        </div>
+                        <button id="btn-open-team-modal" class="btn btn-primary btn-sm">Registrar Nova Seleção</button>
+                    </div>
+
+                    <div class="glass-box">
+                        <div class="box-header" style="margin-bottom: 1.5rem; flex-direction: column; align-items: stretch; gap: 1rem; border-bottom: none; padding-bottom: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <h3><i data-lucide="shield" style="color: var(--accent-color);"></i> Filtro de Times</h3>
+                            </div>
+                            
+                            <!-- NOVO PADRÃO DE FILTROS IDÊNTICO AO GERENCIAR PARTIDAS -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.25rem; align-items: flex-start; background: rgba(20, 30, 24, 0.3); padding: 1rem; border-radius: 8px; border: 1px solid var(--input-border);">
+                                
+                                <div class="filter-column" style="min-width: 160px;">
+                                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">FILTRAR POR SELEÇÃO:</label>
+                                    <div class="custom-select-wrapper" id="wrapper-teams-filter">
+                                        <input type="text" id="ms-teams-filter-input" placeholder="Buscar seleção..." autocomplete="off">
+                                        <div id="ms-teams-filter-dropdown" class="custom-dropdown-list"></div>
+                                    </div>
+                                    <div id="selected-teams-filter-tags" class="filter-tags"></div>
+                                </div>
+
+                                <div class="filter-column" style="min-width: 160px;">
+                                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.5rem;">FILTRAR POR GRUPO:</label>
+                                    <div class="custom-select-wrapper" id="wrapper-groups-filter">
+                                        <input type="text" id="ms-groups-filter-input" placeholder="Buscar grupo..." autocomplete="off">
+                                        <div id="ms-groups-filter-dropdown" class="custom-dropdown-list"></div>
+                                    </div>
+                                    <div id="selected-groups-filter-tags" class="filter-tags"></div>
+                                </div>
+
+                                <div style="display: flex; flex-direction: column; justify-content: flex-start; height: 100%;">
+                                    <label style="font-size: 0.8rem; margin-bottom: 0.5rem; visibility: hidden;">Ação:</label>
+                                    <button id="btn-clear-team-filters" class="btn btn-outline btn-sm" style="width: 100%; height: 44px; margin: 0; display: flex; align-items: center; justify-content: center;">
+                                        <i data-lucide="filter-x" style="width: 16px; height: 16px; margin-right: 0.4rem;"></i> Limpar
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Tabela Mantida Abaixo -->
+                        <div class="table-responsive">
+                            <table class="custom-table" id="teams-table">
+                                <thead>
+                                    <tr>
+                                        <th>Sigla</th>
+                                        <th>Seleção</th>
+                                        <th>Grupo</th>
+                                        <th>Técnico</th>
+                                        <th style="text-align: center;">Ferramentas</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <div class="pagination-controls">
+                            <div class="pagination-info" id="teams-page-info">Página 1 de 1</div>
+                            <div class="pagination-buttons">
+                                <button id="btn-prev-page" class="btn btn-outline btn-sm" disabled>
+                                    <i data-lucide="chevron-left" style="width:16px; height:16px;"></i> Anterior
+                                </button>
+                                <button id="btn-next-page" class="btn btn-outline btn-sm" disabled>
+                                    Próxima <i data-lucide="chevron-right" style="width:16px; height:16px;"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- Participantes -->
+            <!-- ==================================================== -->
+            <div id="tab-participantes" class="tab-panel">
+                <div class="glass-box">
+                    <div class="box-header" style="display: flex; flex-wrap:wrap; gap: 1rem; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3><i data-lucide="users" style="color: var(--accent-color);"></i> Lista Geral de Membros</h3>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Gerenciamento direto dos usuários integrados no Supabase.</p>
+                        </div>
+                        <button id="btn-open-user-modal" class="btn btn-primary btn-sm">Adicionar Participante</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="custom-table" id="users-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px;">Foto</th>
+                                    <th>Nome</th>
+                                    <th>E-mail</th>
+                                    <th style="text-align: center;">Pontos Atuais</th>
+                                    <th style="text-align: center;">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ==================================================== -->
+            <!-- Regras de Pontuação -->
+            <!-- ==================================================== -->
+            <div id="tab-pontuacao" class="tab-panel">
+                <div class="section-grid">
+                    <div class="left-section">
+                        <div class="glass-box">
+                            <div class="box-header">
+                                <div>
+                                    <h3><i data-lucide="sliders" style="color: var(--accent-color);"></i> Distribuição de Pontos</h3>
+                                    <p style="font-size: 0.85rem; color: var(--text-muted);">Defina o peso matemático das regras de cálculo automático do bolão.</p>
+                                </div>
+                            </div>
+                            <form id="form-rules">
+                                <div class="form-group">
+                                    <label for="rule-exact">Acerto de Placar em Cheio (Ex: Apostou 2x1, jogo acabou 2x1)</label>
+                                    <input type="number" id="rule-exact" min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="rule-winner">Acerto de Ganhador/Empate (Ex: Apostou 3x0, acabou 1x0)</label>
+                                    <input type="number" id="rule-winner" min="0" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                    <i data-lucide="check"></i> Salvar Novas Regras
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="modal-add-match-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="box-header" style="margin-bottom: 1.25rem; flex-direction: row;">
+                <h3 id="modal-match-title"><i data-lucide="calendar" style="color: var(--accent-color);"></i> Agendar Novo Confronto</h3>
+                <button type="button" id="btn-close-match-modal" class="btn btn-outline btn-sm" style="padding: 0.25rem; border: none; width: auto; margin:0;"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
+            </div>
+            <form id="form-add-match">
+                <div class="form-group"><label for="match-id">Identificador do Jogo:</label><input type="text" id="match-id" required placeholder="Ex: Jogo 1"></div>
+                <div class="form-group">
+                    <label for="match-stage">Fase do Campeonato:</label>
+                    <select id="match-stage">
+                        <option value="first_stage">Primeira Fase</option>
+                        <option value="round_of_16">Oitavas de Final</option>
+                        <option value="quarter_finals">Quartas de Final</option>
+                        <option value="second_finals">Segundas de Final</option>
+                        <option value="semi_finals">Semifinal</option>
+                        <option value="third_place">Decisão do 3º Lugar</option>
+                        <option value="final">Final</option>
+                    </select>
+                </div>
+                <div class="form-inline">
+                    <div class="form-group"><label for="match-team-a">Sigla da Seleção A:</label><input type="text" id="match-team-a" maxlength="3" required placeholder="BRA"></div>
+                    <span class="vs">X</span>
+                    <div class="form-group"><label for="match-team-b">Sigla da Seleção B:</label><input type="text" id="match-team-b" maxlength="3" required placeholder="FRA"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label for="match-only-date">Data:</label><input type="date" id="match-only-date" required></div>
+                    <div class="form-group"><label for="match-only-time">Hora:</label><input type="time" id="match-only-time" required></div>
+                </div>
+                <div id="score-edit-section" style="display: none; margin-top: 1.5rem; border-top: 1px solid rgba(16, 185, 129, 0.1); padding-top: 1.25rem;">
+                    <label style="color: var(--accent-color); font-weight: 700; font-size: 0.85rem; margin-bottom: 0.75rem; display: block; text-transform: uppercase;">Lançar Resultado Oficial</label>
+                    <div class="form-inline" style="margin-bottom: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;"><label for="match-score-a">Gols A:</label><input type="number" id="match-score-a" min="0" placeholder="-"></div>
+                        <span class="vs">X</span>
+                        <div class="form-group" style="margin-bottom: 0;"><label for="match-score-b">Gols B:</label><input type="number" id="match-score-b" min="0" placeholder="-"></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <input type="checkbox" id="match-finished" style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-color);">
+                        <label for="match-finished" style="margin-bottom: 0; cursor: pointer; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--text-main);">Finalizar Partida (Processar Pontos)</label>
+                    </div>
+                </div>
+                <button type="submit" id="btn-submit-match" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">Agendar Partida</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-team-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="box-header" style="margin-bottom: 1.25rem; flex-direction: row;">
+                <h3 id="modal-team-title"><i data-lucide="shield" style="color: var(--accent-color);"></i> Registrar Seleção</h3>
+                <button type="button" id="btn-close-team-modal" class="btn btn-outline btn-sm" style="padding: 0.25rem; border: none; width: auto; margin:0;"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
+            </div>
+            <form id="form-modal-team">
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;"><label for="modal-team-id">Sigla (ex: BRA):</label><input type="text" id="modal-team-id" maxlength="3" required placeholder="BRA"></div>
+                    <div class="form-group" style="margin-bottom: 0;"><label for="modal-team-name">Nome da Seleção:</label><input type="text" id="modal-team-name" required placeholder="Brasil"></div>
+                </div>
+                <div class="form-row" style="margin-bottom: 1.5rem;">
+                    <div class="form-group" style="margin-bottom: 0;"><label for="modal-team-group">Grupo (A a H):</label><input type="text" id="modal-team-group" maxlength="1" required placeholder="A"></div>
+                    <div class="form-group" style="margin-bottom: 0;"><label for="modal-team-coach">Técnico:</label><input type="text" id="modal-team-coach" required placeholder="Nome do Técnico"></div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Bandeira / Escudo (PNG, JPEG ou AVIF):</label>
+                    <input type="file" id="team-flag-input" accept="image/png, image/jpeg, image/jpg, image/avif">
+                    <label for="team-flag-input" id="team-flag-label" class="file-upload-label"><i data-lucide="upload"></i> Escolher Bandeira</label>
+                </div>
+                <button type="submit" id="btn-submit-team" class="btn btn-primary" style="width: 100%;">Salvar Seleção</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-players-overlay" class="modal-overlay">
+        <div class="modal-card modal-large">
+            <div class="box-header" style="margin-bottom: 1.25rem; flex-direction: row;">
+                <h3 id="modal-players-title"><i data-lucide="users" style="color: var(--accent-color);"></i> Gerenciar Jogadores</h3>
+                <button type="button" id="btn-close-players-modal" class="btn btn-outline btn-sm" style="padding: 0.25rem; border: none; width: auto; margin:0;"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
+            </div>
+            <form id="form-add-player">
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;"><label for="player-name">Nome do Atleta:</label><input type="text" id="player-name" required placeholder="Ex: Vinícius Júnior"></div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="player-position">Posição de Jogo:</label>
+                        <select id="player-position">
+                            <option value="Goleiro">Goleiro</option>
+                            <option value="Defensor">Defensor</option>
+                            <option value="Meio-campista">Meio-campista</option>
+                            <option value="Atacante">Atacante</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Foto do Atleta (PNG, JPEG ou AVIF):</label>
+                    <input type="file" id="player-photo" accept="image/png, image/jpeg, image/jpg, image/avif">
+                    <label for="player-photo" id="player-file-label" class="file-upload-label"><i data-lucide="upload"></i> Escolher Foto</label>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap;">
+                    <button type="button" id="btn-cancel-player-edit" class="btn btn-outline btn-sm" style="display: none; flex: 1; min-width: 120px;">Cancelar Edição</button>
+                    <button type="submit" id="btn-submit-player" class="btn btn-primary" style="flex: 2; min-width: 150px;"><i data-lucide="plus"></i> Convocar Atleta</button>
+                </div>
+            </form>
+            <div class="players-scroll-list" id="players-list-container"></div>
+        </div>
+    </div>
+
+    <div id="modal-user-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="box-header" style="margin-bottom: 1.25rem; flex-direction: row;">
+                <h3 id="modal-user-title"><i data-lucide="user-plus" style="color: var(--accent-color);"></i> Registrar Participante</h3>
+                <button type="button" id="btn-close-user-modal" class="btn btn-outline btn-sm" style="padding: 0.25rem; border: none; width: auto; margin:0;"><i data-lucide="x" style="width: 20px; height: 20px;"></i></button>
+            </div>
+            <form id="form-modal-user">
+                <div class="form-group"><label for="user-name-input">Nome Completo:</label><input type="text" id="user-name-input" required placeholder="Ex: João da Silva"></div>
+                <div class="form-group"><label for="user-email-input">E-mail:</label><input type="email" id="user-email-input" required placeholder="joao@bolao.com"></div>
+                <div class="form-group" id="user-password-group"><label for="user-password-input">Senha de Acesso:</label><input type="password" id="user-password-input" placeholder="Defina uma senha"></div>
+                <div class="form-group">
+                    <label for="user-role-input">Acesso ao Painel:</label>
+                    <select id="user-role-input"><option value="user">Participante</option><option value="admin">Administrador</option></select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Foto do Perfil (PNG, JPEG ou AVIF):</label>
+                    <input type="file" id="user-photo-input" accept="image/png, image/jpeg, image/jpg, image/avif">
+                    <label for="user-photo-input" id="user-file-label" class="file-upload-label"><i data-lucide="upload"></i> Escolher Foto</label>
+                </div>
+
+                <div id="user-points-adjustment-section" style="display: none; margin-top: 1.5rem; border-top: 1px solid rgba(16, 185, 129, 0.1); padding-top: 1.25rem;">
+                    <label style="color: var(--accent-color); font-weight: 700; font-size: 0.85rem; margin-bottom: 0.75rem; display: block; text-transform: uppercase;">Ajuste Manual de Pontuação</label>
+                    <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                        <button type="button" id="btn-add-points-action" class="btn btn-outline btn-sm" style="flex: 1; border-color: rgba(16, 185, 129, 0.3); min-width: 140px;"><i data-lucide="plus-circle" style="color: var(--accent-color);"></i> Adicionar Ponto</button>
+                        <button type="button" id="btn-remove-points-action" class="btn btn-outline btn-sm" style="flex: 1; border-color: rgba(239, 68, 68, 0.3); min-width: 140px;"><i data-lucide="minus-circle" style="color: var(--danger-color);"></i> Remover Ponto</button>
+                    </div>
+                    <div id="points-fields-container" style="display: none; background: rgba(20, 30, 24, 0.3); border: 1px solid var(--input-border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0.75rem;"><label for="user-points-delta" id="points-delta-label">Quantidade de Pontos:</label><input type="number" id="user-points-delta" min="1" placeholder="Ex: 10"></div>
+                        <div class="form-group" style="margin-bottom: 0.75rem;"><label for="user-points-comment">Motivo do Ajuste:</label><input type="text" id="user-points-comment" placeholder="Ex: Ajuste manual"></div>
+                        <button type="button" id="btn-apply-points" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 700;">Confirmar Ajuste de Pontos</button>
+                    </div>
+
+                    <div id="user-points-history-list" style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; padding-right: 0.25rem;"></div>
+                </div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <button type="submit" id="btn-submit-user" class="btn btn-primary" style="width: 100%;">Salvar Participante</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-confirm" class="modal-overlay">
+        <div class="modal-card" style="text-align: center;">
+            <div class="modal-icon"><i data-lucide="alert-triangle" style="width: 28px; height: 28px;"></i></div>
+            <h3 id="modal-title">Deseja remover?</h3>
+            <p id="modal-text">Esta ação é definitiva e não pode ser desfeita no banco de dados.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-outline" id="btn-modal-cancel">Cancelar</button>
+                <button type="button" class="btn btn-primary" style="background-color: var(--danger-color);" id="btn-modal-confirm">Confirmar Exclusão</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ==========================================================================
+        // IMPORTAÇÕES DO SUPABASE COM REALTIME (100% GRATUITO E ESTÁVEL)
+        // ==========================================================================
+        import { supabase } from "./supabase-config.js";
+
+        // DOM Elements
+        const systemCard = document.getElementById("system-control-card");
+        const pillSwitch = document.getElementById("pill-switch-control");
+        const lockIconContainer = document.getElementById("lock-icon-container");
+        const formAddMatch = document.getElementById("form-add-match");
+        const formModalTeam = document.getElementById("form-modal-team");
+        const formAddPlayer = document.getElementById("form-add-player");
+        const formModalUser = document.getElementById("form-modal-user");
+        const btnAddPoints = document.getElementById("btn-add-points-action");
+        const btnRemovePoints = document.getElementById("btn-remove-points-action");
+        const pointsContainer = document.getElementById("points-fields-container");
+        const pointsLabel = document.getElementById("points-delta-label");
+
+        // Vetores reativos globais alimentados em tempo real
+        let globalUsers = [];
+        let globalMatches = [];
+        let globalTeams = [];
+
+        // Estados de Filtros e Edição
+        let isPredictionsLocked = false;
+        let editingMatchId = null; 
+        let editingTeamId = null; 
+        let managingPlayersTeamId = null; 
+        let currentFilter = "first_stage"; 
+        let editingUserId = null;
+        let pointsAdjustmentAction = null; 
+        let editingPlayerIdx = null;
+        let currentSelectedUserForModal = null;
+
+        let teamsCurrentPage = 1;
+        const teamsPerPage = 10;
+        
+        // Filtros Ativos
+        let selectedMatchTeamsFilter = [];
+        let selectedMatchGroupsFilter = [];
+        let selectedMatchStagesFilter = [];
+
+        const stageToKey = {
+            "Primeira Fase": "first_stage", "Oitavas de Final": "round_of_16",
+            "Quartas de Final": "quarter_finals", "Segundas de Final": "second_finals",
+            "Semifinal": "semi_finals", "Decisão do 3º Lugar": "third_place", "Final": "final"
+        };
+        const keyToStage = Object.fromEntries(Object.entries(stageToKey).map(([k, v]) => [v, k]));
+
+        // Dados internos persistidos do Administrador Logado
+        let currentAdminData = { uid: "admin-master", name: "Administrador Geral", email: "admin@bolao.com", photo: "" };
+
+        // ==========================================================================
+        // FUNÇÕES AUXILIARES E DE SEGURANÇA
+        // ==========================================================================
+        
+        function escapeHTML(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function parseCustomDate(dateStr) {
+            if (!dateStr) return new Date(0);
+            const [datePart, timePart] = dateStr.split(" - ");
+            const [day, month, year] = datePart.split("/");
+            if (timePart) {
+                const [hours, minutes] = timePart.split(":");
+                return new Date(year, month - 1, day, hours, minutes);
+            }
+            return new Date(year, month - 1, day);
+        }
+
+        function resizeImageFile(file, maxWidth, maxHeight) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        if (width > height) {
+                            if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
+                        } else {
+                            if (height > maxHeight) { width = Math.round((width * maxHeight) / height); height = maxHeight; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL(file.type, 0.75));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ==========================================================================
+        // INICIALIZAÇÃO E ESCUTA DO REALTIME DO SUPABASE
+        // ==========================================================================
+        async function initApp() {
+            updateAdminUI();
+            setupGlobalEventListeners(); 
+            
+            await fetchConfig();
+            await fetchRules();
+            await fetchUsers();
+            await fetchMatches();
+            await fetchTeams();
+
+            supabase.channel('schema-db-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'configurations' }, () => { fetchConfig(); })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'scoring_rules' }, () => { fetchRules(); })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'users' }, () => { fetchUsers(); })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => { fetchMatches(); })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'teams' }, () => { fetchTeams(); })
+            .subscribe();
+        }
+
+        async function fetchConfig() {
+            const { data, error } = await supabase.from('configurations').select('*').eq('id', 'system').single();
+            if (error) return console.error(error);
+            isPredictionsLocked = data.predictions_locked;
+            updateLockUI(isPredictionsLocked);
+        }
+
+        async function fetchRules() {
+            try {
+                // Busca o valor do placar exato
+                const { data: exact, error: errExact } = await supabase.from('scoring_rules').select('valor').eq('id', 'rule_exact').maybeSingle();
+                if (errExact) console.error("Erro ao buscar rule_exact:", errExact);
+                if (exact) document.getElementById("rule-exact").value = exact.valor;
+
+                // Busca o valor do acerto de ganhador
+                const { data: winner, error: errWinner } = await supabase.from('scoring_rules').select('valor').eq('id', 'rule_winner').maybeSingle();
+                if (errWinner) console.error("Erro ao buscar rule_winner:", errWinner);
+                if (winner) document.getElementById("rule-winner").value = winner.valor;
+            } catch (e) {
+                console.error("Erro crítico na função fetchRules:", e);
+            }
+        }
+
+        async function fetchUsers() {
+            const { data, error } = await supabase.from('users').select('*');
+            if (error) return showNotification("Erro ao carregar usuários.", "error");
+            if (data) { globalUsers = data; renderUsers(); renderDashboard(); }
+        }
+
+        async function fetchMatches() {
+            const { data, error } = await supabase.from('matches').select('*');
+            if (error) return showNotification("Erro ao carregar partidas.", "error");
+            if (data) {
+                globalMatches = data.map(m => ({
+                    id: m.id, group: m.group, teamA: m.team_a, teamB: m.team_b,
+                    date: m.date, scoreA: m.score_a, scoreB: m.score_b, finished: m.finished
+                }));
+                applyMatchFilters(); // Atualiza a tela de partidas respeitando o filtro ativo
+                renderDashboard();
+            }
+        }
+
+        async function fetchTeams() {
+            const { data, error } = await supabase.from('teams').select('*');
+            if (error) return showNotification("Erro ao carregar times.", "error");
+            if (data) {
+                globalTeams = data;
+                renderTeamFilters();
+                renderMatchFiltersUI();
+                renderTeams();
+                renderDashboard();
+                applyMatchFilters(); 
+            }
+        }
+
+        function updateAdminUI() {
+            const desktopName = document.getElementById("admin-name-desktop");
+            const desktopEmail = document.getElementById("admin-role-desktop");
+            if (desktopName) desktopName.innerText = escapeHTML(currentAdminData.name);
+            if (desktopEmail) desktopEmail.innerText = escapeHTML(currentAdminData.email);
+            document.querySelectorAll(".user-avatar").forEach(avatar => {
+                avatar.style.backgroundImage = "none";
+                avatar.innerText = escapeHTML(currentAdminData.name.charAt(0).toUpperCase());
+            });
+        }
+
+        function updateLockUI(locked) {
+            if (locked) {
+                systemCard.className = "stat-card locked-state";
+                pillSwitch.className = "pill-switch locked";
+                lockIconContainer.className = "stat-icon locked-icon";
+                lockIconContainer.innerHTML = `<i id="lock-icon" data-lucide="lock" class="pop-icon"></i>`;
+            } else {
+                systemCard.className = "stat-card open-state";
+                pillSwitch.className = "pill-switch open";
+                lockIconContainer.className = "stat-icon";
+                lockIconContainer.innerHTML = `<i id="lock-icon" data-lucide="unlock" class="pop-icon"></i>`;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        pillSwitch.addEventListener("click", async () => {
+            const newLockState = !isPredictionsLocked;
+            const { data, error } = await supabase.from('configurations').update({ predictions_locked: newLockState }).eq('id', 'system').select().single();
+            if (error) return showNotification('Erro ao alterar o bloqueio.');
+            isPredictionsLocked = data.predictions_locked;
+            updateLockUI(isPredictionsLocked);
+            showNotification(`Sistema ${isPredictionsLocked ? 'BLOQUEADO' : 'LIBERADO'} com sucesso!`);
+        });
+
+        // ==========================================================================
+        // SUBMIT DO FORMULÁRIO DE RESULTADOS (CORRIGIDO PARA ATUALIZAR A TELA NA HORA)
+        // ==========================================================================
+        formAddMatch.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const matchId = document.getElementById("match-id").value.trim(); 
+            const stage = document.getElementById("match-stage").value;
+            const teamA = document.getElementById("match-team-a").value.trim().toLowerCase();
+            const teamB = document.getElementById("match-team-b").value.trim().toLowerCase();
+            const dateInput = document.getElementById("match-only-date").value;
+            const timeInput = document.getElementById("match-only-time").value;
+            
+            const [year, month, day] = dateInput.split("-");
+            const formattedDate = `${day}/${month}/${year} - ${timeInput}`;
+
+            const scoreAInput = document.getElementById("match-score-a").value.trim();
+            const scoreBInput = document.getElementById("match-score-b").value.trim();
+            const isFinished = document.getElementById("match-finished").checked;
+
+            try {
+                const { error: saveError } = await supabase.from('matches').upsert({
+                    id: matchId,
+                    group: keyToStage[stage] || "Primeira Fase",
+                    team_a: teamA,
+                    team_b: teamB,
+                    date: formattedDate,
+                    score_a: isFinished ? scoreAInput : "",
+                    score_b: isFinished ? scoreBInput : "",
+                    finished: isFinished
+                });
+
+                if (saveError) throw saveError;
+
+                // 🌟 INSTANT FEEDBACK: Recarrega os dados do banco e atualiza todas as abas na hora
+                await fetchMatches();
+                await fetchUsers();
+
+                if (isFinished) {
+                    showNotification("Jogo finalizado! O ranking e os confrontos foram atualizados.");
+                } else {
+                    showNotification("Confronto agendado/salvo com sucesso!");
+                }
+
+                // Fecha o modal e limpa o formulário
+                document.getElementById("modal-add-match-overlay").classList.remove("open");
+                formAddMatch.reset();
+                document.getElementById("match-id").disabled = false;
+                editingMatchId = null;
+
+            } catch (err) {
+                console.error(err);
+                showNotification("Erro ao salvar o confronto.", "error");
+            }
+        });
+        
+        // ==========================================================================
+        // FILTROS AVANÇADOS GERENCIAR PARTIDAS
+        // ==========================================================================
+        const filterMatchDate = document.getElementById("filter-match-date");
+        if(filterMatchDate) {
+            filterMatchDate.addEventListener("input", () => {
+                selectedMatchTeamsFilter = [];
+                selectedMatchGroupsFilter = [];
+                selectedMatchStagesFilter = [];
+                if(document.getElementById("ms-match-teams-input")) document.getElementById("ms-match-teams-input").value = "";
+                if(document.getElementById("ms-match-groups-input")) document.getElementById("ms-match-groups-input").value = "";
+                if(document.getElementById("ms-match-stages-input")) document.getElementById("ms-match-stages-input").value = "";
+                renderSelectedTags();
+                applyMatchFilters();
+            });
+        }
+
+        function applyMatchFilters() {
+            const dateValue = filterMatchDate ? filterMatchDate.value : "";
+            let filtered = [...globalMatches];
+
+            if (dateValue) {
+                filtered = filtered.filter(m => {
+                    const matchDate = m.date?.split(" - ")[0];
+                    if (!matchDate) return false;
+                    const [day, month, year] = matchDate.split("/");
+                    const normalized = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+                    return normalized === dateValue;
+                });
+            } else if (selectedMatchTeamsFilter.length > 0) {
+                filtered = filtered.filter(m =>
+                    selectedMatchTeamsFilter.includes(m.teamA) || selectedMatchTeamsFilter.includes(m.teamB)
+                );
+            } else if (selectedMatchGroupsFilter.length > 0) {
+                filtered = filtered.filter(m => {
+                    const tA = globalTeams.find(t => t.id === m.teamA);
+                    const tB = globalTeams.find(t => t.id === m.teamB);
+                    return (tA && selectedMatchGroupsFilter.includes(tA.group)) || 
+                           (tB && selectedMatchGroupsFilter.includes(tB.group));
+                });
+            } else if (selectedMatchStagesFilter.length > 0) {
+                filtered = filtered.filter(m => selectedMatchStagesFilter.includes(m.group));
+            }
+
+            renderMatches(filtered);
+        }
+
+        function renderMatchFiltersUI() {
+            const teamInput = document.getElementById("ms-match-teams-input");
+            const groupInput = document.getElementById("ms-match-groups-input");
+            const stageInput = document.getElementById("ms-match-stages-input");
+            
+            const teamDropdown = document.getElementById("ms-match-teams-dropdown");
+            const groupDropdown = document.getElementById("ms-match-groups-dropdown");
+            const stageDropdown = document.getElementById("ms-match-stages-dropdown");
+
+            if (!teamInput || !groupInput || !stageInput) return;
+
+            function enforceSingleFilter(currentFilter) {
+                if (filterMatchDate) filterMatchDate.value = "";
+                if (currentFilter !== 'team') { selectedMatchTeamsFilter = []; teamInput.value = ""; }
+                if (currentFilter !== 'group') { selectedMatchGroupsFilter = []; groupInput.value = ""; }
+                if (currentFilter !== 'stage') { selectedMatchStagesFilter = []; stageInput.value = ""; }
+            }
+
+            // 1. Filtro de Seleções
+            function updateTeamDropdown(filterText = "") {
+                teamDropdown.innerHTML = "";
+                const filteredTeams = globalTeams
+                    .filter(t => t.name.toLowerCase().includes(filterText.toLowerCase()))
+                    .sort((a, b) => a.name.localeCompare(b.name)); 
+
+                if (filteredTeams.length === 0) {
+                    teamDropdown.innerHTML = `<div style="padding: 0.8rem; color: var(--text-muted);">Nenhuma seleção</div>`;
+                }
+
+                filteredTeams.forEach(t => {
+                    const isSelected = selectedMatchTeamsFilter.includes(t.id);
+                    const item = document.createElement("div");
+                    item.className = `ms-option ${isSelected ? 'selected' : ''}`;
+                    const flagImg = t.flag ? `<img src="${t.flag}" style="width: 20px; height: 15px; object-fit: cover; border-radius: 2px;">` : '🏴';
+                    item.innerHTML = `<div style="display:flex; align-items:center; gap:0.5rem;">${flagImg} <span>${escapeHTML(t.name)}</span></div> <span>${isSelected ? '✓' : ''}</span>`;
+                    
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        enforceSingleFilter('team'); 
+                        if (isSelected) {
+                            selectedMatchTeamsFilter = selectedMatchTeamsFilter.filter(id => id !== t.id);
+                        } else {
+                            selectedMatchTeamsFilter.push(t.id);
+                        }
+                        updateTeamDropdown(teamInput.value); 
+                        renderSelectedTags(); 
+                        applyMatchFilters(); 
+                        teamInput.focus();
+                    };
+                    teamDropdown.appendChild(item);
+                });
+                teamDropdown.classList.add("show");
+            }
+
+            // 2. Filtro de Grupos
+            function updateGroupDropdown(filterText = "") {
+                groupDropdown.innerHTML = "";
+                const allTeamGroups = [...new Set(globalTeams.map(t => t.group))].filter(Boolean).sort();
+                const formattedGroups = allTeamGroups.map(g => `Grupo ${g}`);
+                const filteredGroups = formattedGroups.filter(g => g.toLowerCase().includes(filterText.toLowerCase()));
+
+                if (filteredGroups.length === 0) {
+                    groupDropdown.innerHTML = `<div style="padding: 0.8rem; color: var(--text-muted);">Nenhum grupo</div>`;
+                }
+
+                filteredGroups.forEach(g => {
+                    const pureGroup = g.replace("Grupo ", "");
+                    const isSelected = selectedMatchGroupsFilter.includes(pureGroup);
+                    const item = document.createElement("div");
+                    item.className = `ms-option ${isSelected ? 'selected' : ''}`;
+                    item.innerHTML = `<span>${escapeHTML(g)}</span> <span>${isSelected ? '✓' : ''}</span>`;
+                    
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        enforceSingleFilter('group'); 
+                        if (isSelected) {
+                            selectedMatchGroupsFilter = selectedMatchGroupsFilter.filter(id => id !== pureGroup);
+                        } else {
+                            selectedMatchGroupsFilter.push(pureGroup);
+                        }
+                        updateGroupDropdown(groupInput.value);
+                        renderSelectedTags();
+                        applyMatchFilters();
+                        groupInput.focus();
+                    };
+                    groupDropdown.appendChild(item);
+                });
+                groupDropdown.classList.add("show");
+            }
+
+            // 3. Filtro de Fases
+            function updateStageDropdown(filterText = "") {
+                stageDropdown.innerHTML = "";
+                const allStagesNames = Object.keys(stageToKey);
+                const filteredStages = allStagesNames.filter(s => s.toLowerCase().includes(filterText.toLowerCase()));
+
+                if (filteredStages.length === 0) {
+                    stageDropdown.innerHTML = `<div style="padding: 0.8rem; color: var(--text-muted);">Nenhuma fase</div>`;
+                }
+
+                filteredStages.forEach(stageName => {
+                    const stageKey = stageToKey[stageName];
+                    const isSelected = selectedMatchStagesFilter.includes(stageKey);
+                    const item = document.createElement("div");
+                    item.className = `ms-option ${isSelected ? 'selected' : ''}`;
+                    item.innerHTML = `<span>${escapeHTML(stageName)}</span> <span>${isSelected ? '✓' : ''}</span>`;
+                    
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        enforceSingleFilter('stage'); 
+                        if (isSelected) {
+                            selectedMatchStagesFilter = selectedMatchStagesFilter.filter(s => s !== stageKey);
+                        } else {
+                            selectedMatchStagesFilter.push(stageKey);
+                        }
+                        updateStageDropdown(stageInput.value);
+                        renderSelectedTags();
+                        applyMatchFilters();
+                        stageInput.focus();
+                    };
+                    stageDropdown.appendChild(item);
+                });
+                stageDropdown.classList.add("show");
+            }
+
+            teamInput.addEventListener("input", (e) => updateTeamDropdown(e.target.value));
+            groupInput.addEventListener("input", (e) => updateGroupDropdown(e.target.value));
+            stageInput.addEventListener("input", (e) => updateStageDropdown(e.target.value));
+
+            teamInput.addEventListener("focus", () => { updateTeamDropdown(teamInput.value); groupDropdown.classList.remove("show"); stageDropdown.classList.remove("show"); });
+            groupInput.addEventListener("focus", () => { updateGroupDropdown(groupInput.value); teamDropdown.classList.remove("show"); stageDropdown.classList.remove("show"); });
+            stageInput.addEventListener("focus", () => { updateStageDropdown(stageInput.value); teamDropdown.classList.remove("show"); groupDropdown.classList.remove("show"); });
+
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest("#wrapper-match-teams")) teamDropdown.classList.remove("show");
+                if (!e.target.closest("#wrapper-match-groups")) groupDropdown.classList.remove("show");
+                if (!e.target.closest("#wrapper-match-stages")) stageDropdown.classList.remove("show");
+            });
+        }
+
+        function renderSelectedTags() {
+            const teamTagsContainer = document.getElementById("selected-teams-tags");
+            const groupTagContainer = document.getElementById("selected-groups-tags");
+            const stageTagContainer = document.getElementById("selected-stages-tags");
+
+            if (teamTagsContainer) {
+                teamTagsContainer.innerHTML = ""; 
+                selectedMatchTeamsFilter.forEach (id => {
+                    const team = globalTeams.find(t => t.id === id);
+                    if (!team) return;
+                    teamTagsContainer.innerHTML += `
+                        <div class="filter-tag">
+                            ${escapeHTML(team.name)} <span onclick="removeMatchFilter('team', '${id}')">×</span>
+                        </div>`;
+                });
+            }
+
+            if (groupTagContainer) {
+                groupTagContainer.innerHTML = ""; 
+                selectedMatchGroupsFilter.forEach(g => {
+                    groupTagContainer.innerHTML += `
+                        <div class="filter-tag">
+                            Grupo ${escapeHTML(g)} <span onclick="removeMatchFilter('group', '${g}')">×</span>
+                        </div>`;
+                });
+            }
+
+            if (stageTagContainer) {
+                stageTagContainer.innerHTML = ""; 
+                selectedMatchStagesFilter.forEach(stageKey => {
+                    const stageName = keyToStage[stageKey];
+                    stageTagContainer.innerHTML += `
+                        <div class="filter-tag">
+                            ${escapeHTML(stageName)} <span onclick="removeMatchFilter('stage', '${stageKey}')">×</span>
+                        </div>`;
+                });
+            }
+        }
+
+        window.removeMatchFilter = function(type, value) {
+            if (type === 'team') selectedMatchTeamsFilter = selectedMatchTeamsFilter.filter(id => id !== value);
+            else if (type === 'group') selectedMatchGroupsFilter = selectedMatchGroupsFilter.filter(g => g !== value);
+            else if (type === 'stage') selectedMatchStagesFilter = selectedMatchStagesFilter.filter(s => s !== value);
+            renderSelectedTags();
+            applyMatchFilters();
+        };
+
+        // ==========================================================================
+        // RENDERIZADORES DE TABELAS E COMPONENTES VISUAIS (RECUPERADOS!)
+        // ==========================================================================
+        function renderDashboard() {
+            const participantes = globalUsers.filter(u => u.role !== "admin");
+            const statUsersEl = document.getElementById("stat-users");
+            if(statUsersEl) statUsersEl.innerText = `${participantes.length} ativos`;
+
+            let totalBets = 0;
+            participantes.forEach(u => {
+                if(u.bets) {
+                    totalBets += Object.keys(u.bets).filter(key => u.bets[key].scoreA !== "").length;
+                }
+            });
+            const statBetsEl = document.getElementById("stat-bets");
+            if(statBetsEl) statBetsEl.innerText = `${totalBets} palpites`;
+
+            // ==========================================================================
+            // LÓGICA CORRIGIDA: CAPTURA A PRÓXIMA PARTIDA MAIS PRÓXIMA DO HORÁRIO ATUAL
+            // ==========================================================================
+            const now = new Date();
+            const upcoming = globalMatches.filter(m => !m.finished);
+
+            upcoming.sort((a, b) => {
+                const dateA = parseCustomDate(a.date);
+                const dateB = parseCustomDate(b.date);
+                
+                const diffA = dateA - now;
+                const diffB = dateB - now;
+
+                // 1. Se ambos os jogos estão no futuro, exibe o que vai acontecer mais cedo
+                if (diffA >= 0 && diffB >= 0) return diffA - diffB;
+                
+                // 2. Se um jogo é futuro e o outro já passou, o futuro tem prioridade absoluta no Dashboard
+                if (diffA >= 0 && diffB < 0) return -1;
+                if (diffA < 0 && diffB >= 0) return 1;
+                
+                // 3. Se ambos os jogos já passaram (e estão sem placar), exibe o mais recente primeiro
+                return diffB - diffA;
+            });
+
+            const bannerEl = document.getElementById("next-match-banner-el");
+            const noMatchMsg = document.getElementById("no-next-match-msg");
+
+            if (upcoming.length > 0 && bannerEl && noMatchMsg) {
+                const nextMatch = upcoming[0];
+                const tA = globalTeams.find(t => t.id === nextMatch.teamA);
+                const tB = globalTeams.find(t => t.id === nextMatch.teamB);
+
+                document.getElementById("banner-name-team-a").innerText = escapeHTML(tA ? tA.name : nextMatch.teamA.toUpperCase());
+                document.getElementById("banner-name-team-b").innerText = escapeHTML(tB ? tB.name : nextMatch.teamB.toUpperCase());
+                document.getElementById("banner-stage-label").innerText = escapeHTML(nextMatch.group);
+                document.getElementById("banner-date-label").innerText = escapeHTML(nextMatch.date);
+
+                document.getElementById("banner-flag-team-a").innerHTML = tA && tA.flag ? `<img src="${tA.flag}" style="width: 48px; height: 32px; object-fit:cover; border-radius:4px;">` : "🏴";
+                document.getElementById("banner-flag-team-b").innerHTML = tB && tB.flag ? `<img src="${tB.flag}" style="width: 48px; height: 32px; object-fit:cover; border-radius:4px;">` : "🏴";
+
+                const bgA = document.querySelector(".banner-bg-flag.flag-a");
+                const bgB = document.querySelector(".banner-bg-flag.flag-b");
+                if(bgA) bgA.style.backgroundImage = tA && tA.flag ? `url('${tA.flag}')` : "none";
+                if(bgB) bgB.style.backgroundImage = tB && tB.flag ? `url('${tB.flag}')` : "none";
+
+                bannerEl.style.display = "flex";
+                noMatchMsg.style.display = "none";
+            } else if(bannerEl && noMatchMsg) {
+                bannerEl.style.display = "none";
+                noMatchMsg.style.display = "block";
+            }
+
+            const sorted = [...participantes].sort((a,b) => (b.points || 0) - (a.points || 0));
+            const tbody = document.querySelector("#ranking-table tbody");
+            if(tbody) {
+                tbody.innerHTML = "";
+                sorted.forEach((u, i) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td style="font-weight:bold; color: ${i < 3 ? 'var(--gold-color)' : 'var(--text-muted)'}; padding-left:1.5rem;">${i+1}º</td>
+                        <td style="font-weight:600;">${escapeHTML(u.name)}</td>
+                        <td style="text-align:center; font-weight:bold; color:var(--accent-color);">${u.points || 0} pts</td>
+                        <td style="text-align:center;">${u.exact_bets || 0}</td>
+                        <td style="text-align:center; color:var(--success-color); font-weight:600;">${u.correct_bets || 0}</td>
+                        <td style="text-align:center; color:var(--danger-color); font-weight:600;">${u.wrong_bets || 0}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // ==========================================================================
+        // NOVA RENDERIZAÇÃO DA LISTA DE PARTIDAS
+        // ==========================================================================
+        function renderMatches(data = globalMatches) {
+            const container = document.getElementById("matches-container");
+            if(!container) return;
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:3rem; color:var(--text-muted); background: rgba(20, 30, 24, 0.3); border-radius: 12px; border: 1px dashed var(--input-border);">
+                        <i data-lucide="calendar-x" style="width: 32px; height: 32px; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                        <br>Nenhum confronto localizado para este filtro.
+                    </div>`;
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            const grouped = {};
+            data.forEach(m => {
+                // Segurança: Caso o jogo não tenha data salva no banco, não quebra a tela
+                const dateKey = m.date ? m.date.split(" - ")[0] : "Data Indefinida";
+                if (!grouped[dateKey]) grouped[dateKey] = [];
+                grouped[dateKey].push(m);
+            });
+
+            Object.keys(grouped)
+                .sort((a, b) => {
+                    if (a === "Data Indefinida") return 1;
+                    if (b === "Data Indefinida") return -1;
+                    const [da, ma, ya] = a.split("/");
+                    const [db, mb, yb] = b.split("/");
+                    return new Date(`${ya}-${ma}-${da}`) - new Date(`${yb}-${mb}-${db}`);
+                })
+                .forEach(date => {
+                    
+                    // NOVO: Ordena os jogos do mesmo dia pelo Horário!
+                    grouped[date].sort((a, b) => {
+                        const timeA = a.date && a.date.includes(" - ") ? a.date.split(" - ")[1] : "00:00";
+                        const timeB = b.date && b.date.includes(" - ") ? b.date.split(" - ")[1] : "00:00";
+                        return timeA.localeCompare(timeB);
+                    });
+
+                    // Cabeçalho da Data super elegante
+                    const header = document.createElement("div");
+                    header.style.margin = "1.5rem 0 0.75rem";
+                    header.style.paddingBottom = "0.5rem";
+                    header.style.borderBottom = "1px solid rgba(16, 185, 129, 0.1)";
+                    header.style.display = "flex";
+                    header.style.alignItems = "center";
+                    header.style.gap = "0.5rem";
+                    header.style.fontWeight = "800";
+                    header.style.color = "var(--text-main)";
+                    header.innerHTML = `<i data-lucide="calendar-days" style="color: var(--accent-color); width: 18px; height: 18px;"></i> ${escapeHTML(date)}`;
+                    container.appendChild(header);
+
+                    grouped[date].forEach(m => {
+                        const tA = globalTeams.find(t => t.id === m.teamA);
+                        const tB = globalTeams.find(t => t.id === m.teamB);
+                        
+                        // Busca o nome amigável da Fase (ex: "Oitavas de Final" invés de "round_of_16")
+                        const stageName = keyToStage[m.group] || m.group;
+
+                        // Prepara as bandeiras
+                        const flagA = tA && tA.flag ? `<img src="${tA.flag}" style="width: 26px; height: 18px;">` : '🏴';
+                        const flagB = tB && tB.flag ? `<img src="${tB.flag}" style="width: 26px; height: 18px;">` : '🏴';
+
+                        const card = document.createElement("div");
+                        card.className = `match-card ${m.finished ? 'finished-match' : ''}`;
+
+                        card.innerHTML = `
+                            <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:1rem; flex-wrap:wrap;">
+                                
+                                <!-- Bloco da Esquerda: Infos e Times -->
+                                <div style="flex: 1; min-width: 280px;">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                        <span class="match-info-tag">${escapeHTML(stageName)}</span>
+                                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">
+                                            <strong style="color:var(--accent-color);">${escapeHTML(m.id)}</strong> 
+                                            &nbsp;|&nbsp; 🕐 ${escapeHTML(m.date ? m.date.split(" - ")[1] : "--:--")}
+                                        </span>
+                                    </div>
+                                    <div class="match-teams" style="justify-content: flex-start;">
+                                        <div class="team">${flagA} ${escapeHTML(tA?.name || m.teamA.toUpperCase())}</div>
+                                        <span class="match-versus">VS</span>
+                                        <div class="team">${flagB} ${escapeHTML(tB?.name || m.teamB.toUpperCase())}</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bloco Central: Placar -->
+                                <div class="score-badge-display ${m.finished ? 'finished' : ''}">
+                                    <span class="score-badge-val">${m.scoreA !== "" ? escapeHTML(m.scoreA) : "-"}</span>
+                                    <span style="color: var(--text-muted); font-size: 0.85rem;">x</span>
+                                    <span class="score-badge-val">${m.scoreB !== "" ? escapeHTML(m.scoreB) : "-"}</span>
+                                </div>
+                                
+                                <!-- Bloco Direita: Botões -->
+                                <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                                    <button class="btn btn-outline btn-sm btn-view-stats" data-id="${escapeHTML(m.id)}" title="Ver Estatísticas" style="padding: 0.5rem;">
+                                        <i data-lucide="bar-chart-2" style="width: 18px; height: 18px;"></i>
+                                    </button>
+                                    <button class="btn ${m.finished ? 'btn-outline' : 'btn-primary'} btn-sm btn-edit-match" data-id="${escapeHTML(m.id)}">
+                                        <i data-lucide="edit-3" style="width: 16px; height: 16px; margin-right: 0.3rem;"></i> 
+                                        ${m.finished ? 'Editar Placar' : 'Lançar Placar'}
+                                    </button>
+                                </div>
+
+                            </div>
+                            
+                            <!-- Bloco Escondido de Estatísticas -->
+                            <div id="stats-container-${escapeHTML(m.id)}" class="match-stats-container">
+                                <div class="stats-bars-grid">
+                                    <div class="stat-bar-box">
+                                        <p>Vitória ${escapeHTML(tA?.name || 'V1')}</p>
+                                        <span id="pct-a-${escapeHTML(m.id)}">0%</span>
+                                    </div>
+                                    <div class="stat-bar-box">
+                                        <p>Empate</p>
+                                        <span id="pct-x-${escapeHTML(m.id)}">0%</span>
+                                    </div>
+                                    <div class="stat-bar-box">
+                                        <p>Vitória ${escapeHTML(tB?.name || 'V2')}</p>
+                                        <span id="pct-b-${escapeHTML(m.id)}">0%</span>
+                                    </div>
+                                </div>
+                                <div id="bets-list-${escapeHTML(m.id)}" class="bets-list" style="margin-top: 1rem; border-top: 1px solid rgba(16, 185, 129, 0.1); padding-top: 1rem;"></div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                });
+            
+            // Recarrega os ícones Lucide para garantir que apareçam nos botões novos
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ==========================================================================
+        // VARIÁVEIS DE FILTRO DA ABA TIMES
+        // ==========================================================================
+        let selectedTeamsTableFilter = [];
+        let selectedGroupsTableFilter = [];
+
+        // ==========================================================================
+        // INTELIGÊNCIA DOS DROPDOWNS DE FILTRO
+        // ==========================================================================
+        function renderTeamFilters() {
+            const teamInput = document.getElementById("ms-teams-filter-input");
+            const groupInput = document.getElementById("ms-groups-filter-input");
+            const teamDropdown = document.getElementById("ms-teams-filter-dropdown");
+            const groupDropdown = document.getElementById("ms-groups-filter-dropdown");
+
+            if (!teamInput || !groupInput) return;
+
+            function enforceSingleTeamFilter(currentFilter) {
+                if (currentFilter !== 'team') { selectedTeamsTableFilter = []; teamInput.value = ""; }
+                if (currentFilter !== 'group') { selectedGroupsTableFilter = []; groupInput.value = ""; }
+            }
+
+            // Dropdown de Seleções
+            window.updateTeamsFilterDropdown = function(filterText = "") {
+                teamDropdown.innerHTML = "";
+                const filteredTeams = globalTeams
+                    .filter(t => t.name.toLowerCase().includes(filterText.toLowerCase()))
+                    .sort((a, b) => a.name.localeCompare(b.name));
+
+                if (filteredTeams.length === 0) {
+                    teamDropdown.innerHTML = `<div style="padding: 0.8rem; color: var(--text-muted);">Nenhuma seleção</div>`;
+                }
+
+                filteredTeams.forEach(t => {
+                    const isSelected = selectedTeamsTableFilter.includes(t.id);
+                    const item = document.createElement("div");
+                    item.className = `ms-option ${isSelected ? 'selected' : ''}`;
+                    const flagImg = t.flag ? `<img src="${t.flag}" style="width: 20px; height: 15px; object-fit: cover; border-radius: 2px;">` : '🏴';
+                    item.innerHTML = `<div style="display:flex; align-items:center; gap:0.5rem;">${flagImg} <span>${escapeHTML(t.name)}</span></div> <span>${isSelected ? '✓' : ''}</span>`;
+                    
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        enforceSingleTeamFilter('team');
+                        if (isSelected) {
+                            selectedTeamsTableFilter = selectedTeamsTableFilter.filter(id => id !== t.id);
+                        } else {
+                            selectedTeamsTableFilter.push(t.id);
+                        }
+                        updateTeamsFilterDropdown(teamInput.value);
+                        renderTeamFilterTags();
+                        applyTeamFilters();
+                        teamInput.focus();
+                    };
+                    teamDropdown.appendChild(item);
+                });
+                teamDropdown.classList.add("show");
+            }
+
+            // Dropdown de Grupos
+            window.updateGroupsFilterDropdown = function(filterText = "") {
+                groupDropdown.innerHTML = "";
+                const allGroups = [...new Set(globalTeams.map(t => t.group))].filter(Boolean).sort();
+                const formattedGroups = allGroups.map(g => `Grupo ${g}`);
+                const filteredGroups = formattedGroups.filter(g => g.toLowerCase().includes(filterText.toLowerCase()));
+
+                if (filteredGroups.length === 0) {
+                    groupDropdown.innerHTML = `<div style="padding: 0.8rem; color: var(--text-muted);">Nenhum grupo</div>`;
+                }
+
+                filteredGroups.forEach(g => {
+                    const pureGroup = g.replace("Grupo ", "");
+                    const isSelected = selectedGroupsTableFilter.includes(pureGroup);
+                    const item = document.createElement("div");
+                    item.className = `ms-option ${isSelected ? 'selected' : ''}`;
+                    item.innerHTML = `<span>${escapeHTML(g)}</span> <span>${isSelected ? '✓' : ''}</span>`;
+                    
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        enforceSingleTeamFilter('group');
+                        if (isSelected) {
+                            selectedGroupsTableFilter = selectedGroupsTableFilter.filter(id => id !== pureGroup);
+                        } else {
+                            selectedGroupsTableFilter.push(pureGroup);
+                        }
+                        updateGroupsFilterDropdown(groupInput.value);
+                        renderTeamFilterTags();
+                        applyTeamFilters();
+                        groupInput.focus();
+                    };
+                    groupDropdown.appendChild(item);
+                });
+                groupDropdown.classList.add("show");
+            }
+
+            // Eventos de digitar e focar nos inputs
+            teamInput.addEventListener("input", (e) => updateTeamsFilterDropdown(e.target.value));
+            groupInput.addEventListener("input", (e) => updateGroupsFilterDropdown(e.target.value));
+            teamInput.addEventListener("focus", () => { updateTeamsFilterDropdown(teamInput.value); groupDropdown.classList.remove("show"); });
+            groupInput.addEventListener("focus", () => { updateGroupsFilterDropdown(groupInput.value); teamDropdown.classList.remove("show"); });
+
+            // Fecha o menu se clicar fora
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest("#wrapper-teams-filter")) teamDropdown.classList.remove("show");
+                if (!e.target.closest("#wrapper-groups-filter")) groupDropdown.classList.remove("show");
+            });
+            
+            // Botão Limpar
+            const btnClear = document.getElementById("btn-clear-team-filters");
+            if(btnClear) {
+                btnClear.addEventListener("click", () => {
+                    selectedTeamsTableFilter = [];
+                    selectedGroupsTableFilter = [];
+                    teamInput.value = "";
+                    groupInput.value = "";
+                    renderTeamFilterTags();
+                    applyTeamFilters();
+                });
+            }
+        }
+
+        // ==========================================================================
+        // RENDERIZAR AS TAGS VERDES (PÍLULAS) DOS FILTROS
+        // ==========================================================================
+        function renderTeamFilterTags() {
+            const teamTagsContainer = document.getElementById("selected-teams-filter-tags");
+            const groupTagContainer = document.getElementById("selected-groups-filter-tags");
+
+            if (teamTagsContainer) {
+                teamTagsContainer.innerHTML = "";
+                selectedTeamsTableFilter.forEach(id => {
+                    const team = globalTeams.find(t => t.id === id);
+                    if (!team) return;
+                    teamTagsContainer.innerHTML += `
+                        <div class="filter-tag">
+                            ${escapeHTML(team.name)} <span onclick="removeTeamTableFilter('team', '${id}')">×</span>
+                        </div>`;
+                });
+            }
+            if (groupTagContainer) {
+                groupTagContainer.innerHTML = "";
+                selectedGroupsTableFilter.forEach(g => {
+                    groupTagContainer.innerHTML += `
+                        <div class="filter-tag">
+                            Grupo ${escapeHTML(g)} <span onclick="removeTeamTableFilter('group', '${g}')">×</span>
+                        </div>`;
+                });
+            }
+        }
+
+        window.removeTeamTableFilter = function(type, value) {
+            if (type === 'team') selectedTeamsTableFilter = selectedTeamsTableFilter.filter(id => id !== value);
+            else if (type === 'group') selectedGroupsTableFilter = selectedGroupsTableFilter.filter(g => g !== value);
+            renderTeamFilterTags();
+            applyTeamFilters();
+        };
+
+        function applyTeamFilters() {
+            teamsCurrentPage = 1; // Reseta a paginação ao filtrar
+            renderTeams();
+        }
+
+        // ==========================================================================
+        // RENDERIZAR A TABELA DE TIMES E CONTROLES DE PAGINAÇÃO
+        // ==========================================================================
+        function renderTeams() {
+            let filtered = [...globalTeams];
+            
+            // Cruza os filtros com os dados do banco
+            if (selectedTeamsTableFilter.length > 0) {
+                filtered = filtered.filter(t => selectedTeamsTableFilter.includes(t.id));
+            } else if (selectedGroupsTableFilter.length > 0) {
+                filtered = filtered.filter(t => selectedGroupsTableFilter.includes(t.group));
+            }
+
+            // Ordena alfabeticamente
+            filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+            // Cálculos da Paginação
+            const totalPages = Math.ceil(filtered.length / teamsPerPage) || 1; 
+            
+            // Prevenção: se o usuário filtrar e a página atual ficar maior que o novo total
+            if (teamsCurrentPage > totalPages) {
+                teamsCurrentPage = totalPages;
+            }
+
+            const startIndex = (teamsCurrentPage - 1) * teamsPerPage;
+            const paginatedTeams = filtered.slice(startIndex, startIndex + teamsPerPage);
+
+            // Renderiza o HTML da tabela
+            const tbody = document.querySelector("#teams-table tbody");
+            if(!tbody) return;
+            tbody.innerHTML = "";
+
+            if (paginatedTeams.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">Nenhuma seleção encontrada.</td></tr>`;
+            } else {
+                paginatedTeams.forEach(t => {
+                    const flagImg = t.flag ? `<img src="${t.flag}" style="width: 24px; height: 16px; object-fit: cover; border-radius: 2px;">` : '🏴';
+                    
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:800; color:var(--accent-color);">${escapeHTML(t.id.toUpperCase())}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight:600;">
+                                    ${flagImg} ${escapeHTML(t.name)}
+                                </div>
+                            </td>
+                            <td>Grupo ${escapeHTML(t.group)}</td>
+                            <td>${escapeHTML(t.coach || 'Sem Técnico')}</td>
+                            <td style="text-align:center;">
+                                <button class="btn btn-outline btn-sm btn-edit-team" data-id="${escapeHTML(t.id)}" title="Editar Seleção" style="padding: 0.4rem;">
+                                    <i data-lucide="edit" style="width: 16px; height: 16px;"></i>
+                                </button>
+                                <button class="btn btn-outline btn-sm btn-manage-players" data-id="${escapeHTML(t.id)}" title="Gerenciar Jogadores" style="padding: 0.4rem; margin-left: 0.5rem;">
+                                    <i data-lucide="users" style="width: 16px; height: 16px;"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                });
+            }
+
+            // ==================================================
+            // ATUALIZAÇÃO VISUAL DOS BOTÕES E TEXTO DA PÁGINA
+            // ==================================================
+            const pageInfo = document.getElementById("teams-page-info");
+            const btnPrev = document.getElementById("btn-prev-page");
+            const btnNext = document.getElementById("btn-next-page");
+
+            if (pageInfo) pageInfo.innerText = `Página ${teamsCurrentPage} de ${totalPages}`;
+            
+            // Desabilita botões se bater nos limites
+            if (btnPrev) btnPrev.disabled = teamsCurrentPage === 1;
+            if (btnNext) btnNext.disabled = teamsCurrentPage === totalPages;
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        // ==========================================================================
+        // RENDERIZAR LISTA DE JOGADORES NO MODAL DE ELENCO
+        // ==========================================================================
+        function renderPlayersList(team) {
+            const container = document.getElementById("players-list-container");
+            if (!container) return;
+            
+            container.innerHTML = "";
+            
+            // Supondo que os jogadores fiquem salvos em um array "players" dentro do objeto do time
+            const players = team.players || []; 
+            
+            if (players.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:1.5rem; color:var(--text-muted); font-size: 0.9rem;">Nenhum atleta convocado ainda.</div>`;
+                return;
+            }
+
+            players.forEach((player, index) => {
+                const photoHtml = player.photo 
+                    ? `<img src="${player.photo}" class="player-avatar-small">` 
+                    : `<div class="player-avatar-small" style="display:flex; justify-content:center; align-items:center; font-size:1.2rem;">👤</div>`;
+                    
+                container.innerHTML += `
+                    <div class="player-item-row">
+                        <div class="player-item-info">
+                            ${photoHtml}
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.95rem;">${escapeHTML(player.name)}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">${escapeHTML(player.position)}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <!-- Opcional: Futuro botão de remover jogador -->
+                            <button type="button" class="btn btn-outline btn-sm btn-remove-player" data-idx="${index}" title="Desconvocar" style="padding: 0.3rem; border-color: rgba(239,68,68,0.3); color: var(--danger-color);">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function renderUsers() {
+            const tbody = document.querySelector("#users-table tbody");
+            if(!tbody) return;
+            tbody.innerHTML = "";
+            globalUsers.forEach(u => {
+                // Lógica para a foto
+                const photoHtml = u.photo 
+                    ? `<img src="${u.photo}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(16, 185, 129, 0.2);">` 
+                    : `<div style="width: 40px; height: 40px; border-radius: 50%; background: var(--input-bg); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 2px solid rgba(16, 185, 129, 0.2);">👤</div>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${photoHtml}</td>
+                        <td style="font-weight:600;">${escapeHTML(u.name)}</td>
+                        <td>${escapeHTML(u.email)}</td>
+                        <td style="text-align:center; font-weight:bold; color:var(--accent-color);">${u.points || 0} pts</td>
+                        <td style="text-align:center;">
+                            <button class="btn btn-outline btn-sm btn-edit-user" data-id="${escapeHTML(u.id)}" title="Editar Participante" style="padding: 0.4rem;">
+                                <i data-lucide="edit" style="width: 16px; height: 16px;"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+            if (window.lucide) lucide.createIcons(); // Recarrega os ícones
+        }
+
+        // =========================================================
+        // MODAL DE REGISTRAR PARTICIPANTE E BOTOES
+        // =========================================================
+        const btnOpenUserModal = document.getElementById("btn-open-user-modal");
+        if (btnOpenUserModal) {
+            btnOpenUserModal.addEventListener("click", () => {
+                editingUserId = null;
+                formModalUser.reset();
+                
+                // Configura a interface para INSERIR
+                document.getElementById("user-password-group").style.display = "flex"; // Mostra campo de senha
+                document.getElementById("user-email-input").disabled = false;
+                document.getElementById("modal-user-title").innerHTML = '<i data-lucide="user-plus" style="color: var(--accent-color);"></i> Registrar Participante';
+                document.getElementById("user-points-adjustment-section").style.display = "none"; // Esconde ajuste de pontos
+                
+                const userFlagLabel = document.getElementById("user-file-label");
+                if(userFlagLabel) userFlagLabel.innerHTML = '<i data-lucide="upload"></i> Escolher Foto';
+                
+                document.getElementById("modal-user-overlay").classList.add("open");
+                if (window.lucide) lucide.createIcons();
+            });
+        }
+
+        const btnCloseUserModal = document.getElementById("btn-close-user-modal");
+        if (btnCloseUserModal) {
+            btnCloseUserModal.addEventListener("click", () => {
+                document.getElementById("modal-user-overlay").classList.remove("open");
+            });
+        }
+
+        // Menu Tab Switchers
+        const menuItems = document.querySelectorAll(".menu-item[data-tab], .mobile-nav-item[data-tab]");
+        menuItems.forEach(item => {
+            item.addEventListener("click", () => {
+                const tab = item.getAttribute("data-tab");
+                menuItems.forEach(i => i.classList.remove("active"));
+                document.querySelectorAll(`[data-tab="${tab}"]`).forEach(i => i.classList.add("active"));
+                document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+                const targetPanel = document.getElementById(`tab-${tab}`);
+                if(targetPanel) targetPanel.classList.add("active");
+            });
+        });
+
+        // ==========================================================================
+        // GERENCIAMENTO GLOBAL DE EVENTOS (DELEGAÇÃO) 
+        // ==========================================================================
+        function setupGlobalEventListeners() {
+            const matchesContainer = document.getElementById("matches-container");
+            if (matchesContainer) {
+                matchesContainer.addEventListener("click", (e) => {
+                    
+                    const btnStats = e.target.closest('.btn-view-stats');
+                    if (btnStats) {
+                        const matchId = btnStats.getAttribute("data-id");
+                        const statsContainer = document.getElementById(`stats-container-${matchId}`);
+                        if(!statsContainer) return;
+                        
+                        const isExpanded = statsContainer.style.display === "block";
+                        statsContainer.style.display = isExpanded ? "none" : "block";
+
+                       if (!isExpanded) {
+                            const listContainer = document.getElementById(`bets-list-${matchId}`);
+                            let totalPalpites = 0, winA = 0, draw = 0, winB = 0;
+                            if(listContainer) listContainer.innerHTML = "";
+
+                            globalUsers.filter(u => u.role !== "admin").forEach(usuario => {
+                                // Tenta buscar a aposta, tratando caso venha nula ou como string JSON
+                                let userBets = {};
+                                try {
+                                    if (typeof usuario.bets === 'string') {
+                                        userBets = JSON.parse(usuario.bets);
+                                    } else if (typeof usuario.bets === 'object' && usuario.bets !== null) {
+                                        userBets = usuario.bets;
+                                    }
+                                } catch (e) {
+                                    userBets = {};
+                                }
+
+                                const bet = userBets[matchId];
+
+                                if (bet && bet.scoreA !== undefined && bet.scoreA !== "" && bet.scoreB !== undefined && bet.scoreB !== "") {
+                                    const sA = parseInt(bet.scoreA);
+                                    const sB = parseInt(bet.scoreB);
+                                    totalPalpites++;
+                                    if (sA > sB) winA++; else if (sA < sB) winB++; else draw++;
+
+                                    if(listContainer) {
+                                        listContainer.innerHTML += `
+                                            <div class="bet-user-row" style="display:flex; justify-content:space-between; margin: 0.3rem 0; font-size:0.85rem;">
+                                                <div class="bet-user-info"><span>${escapeHTML(usuario.name)}</span></div>
+                                                <div class="bet-user-score" style="font-weight:600;">${sA} x ${sB}</div>
+                                            </div>`;
+                                    }
+                                }
+                            });
+
+                            if (totalPalpites > 0) {
+                                document.getElementById(`pct-a-${matchId}`).innerText = `${Math.round((winA / totalPalpites) * 100)}%`;
+                                document.getElementById(`pct-x-${matchId}`).innerText = `${Math.round((draw / totalPalpites) * 100)}%`;
+                                document.getElementById(`pct-b-${matchId}`).innerText = `${Math.round((winB / totalPalpites) * 100)}%`;
+                            } else {
+                                document.getElementById(`pct-a-${matchId}`).innerText = `0%`;
+                                document.getElementById(`pct-x-${matchId}`).innerText = `0%`;
+                                document.getElementById(`pct-b-${matchId}`).innerText = `0%`;
+                                if(listContainer) listContainer.innerHTML = `<div style="text-align:center; padding:1rem; color:var(--text-muted); font-size:0.85rem;">Nenhum palpite registrado ainda.</div>`;
+                            }
+                        }
+                        return;
+                    }
+
+                    const btnEdit = e.target.closest('.btn-edit-match');
+                    if (btnEdit) {
+                        const match = globalMatches.find(m => m.id === btnEdit.getAttribute("data-id"));
+                        if(match) {
+                            editingMatchId = match.id;
+                            
+                            // 1. Preenche os dados fundamentais do confronto
+                            document.getElementById("match-id").value = match.id;
+                            document.getElementById("match-id").disabled = true; // Bloqueia o ID na edição
+                            document.getElementById("match-team-a").value = (match.teamA || "").toUpperCase();
+                            document.getElementById("match-team-b").value = (match.teamB || "").toUpperCase();
+                            
+                            // 2. Converte o nome amigável da fase de volta para a chave do <select>
+                            const stageKey = stageToKey[match.group] || "first_stage";
+                            document.getElementById("match-stage").value = stageKey;
+
+                            // 3. FATIA A DATA E O HORÁRIO PARA OS INPUTS NATIVOS DO HTML
+                            const dateRaw = match.date || "";
+                            if (dateRaw.includes(" - ")) {
+                                const [datePart, timePart] = dateRaw.split(" - ");
+                                const [day, month, year] = datePart.split("/");
+                                // O input tipo 'date' exige o formato estrito YYYY-MM-DD
+                                document.getElementById("match-only-date").value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                                document.getElementById("match-only-time").value = timePart;
+                            } else if (dateRaw.includes("/")) {
+                                const [day, month, year] = dateRaw.split("/");
+                                document.getElementById("match-only-date").value = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                                document.getElementById("match-only-time").value = "";
+                            }
+
+                            // 4. Preenche os placares oficiais e a trava de finalização
+                            document.getElementById("match-score-a").value = match.scoreA;
+                            document.getElementById("match-score-b").value = match.scoreB;
+                            document.getElementById("match-finished").checked = match.finished;
+                            
+                            // Ajustes visuais da interface do Pop-up
+                            document.getElementById("score-edit-section").style.display = "block";
+                            document.getElementById("modal-match-title").innerText = "Atualizar Confronto";
+                            document.getElementById("modal-add-match-overlay").classList.add("open");
+                        }
+                    }
+                });
+            }
+
+            const btnOpenMatch = document.getElementById("btn-open-match-modal");
+            if(btnOpenMatch) {
+                btnOpenMatch.addEventListener("click", () => {
+                    editingMatchId = null;
+                    formAddMatch.reset();
+                    document.getElementById("match-id").disabled = false;
+                    document.getElementById("modal-match-title").innerHTML = '<i data-lucide="calendar" style="color: var(--accent-color);"></i> Agendar Novo Confronto';
+                    document.getElementById("score-edit-section").style.display = "none";
+                    document.getElementById("modal-add-match-overlay").classList.add("open");
+                    if (window.lucide) lucide.createIcons();
+                });
+            }
+
+            const btnCloseMatch = document.getElementById("btn-close-match-modal");
+            if(btnCloseMatch) {
+                btnCloseMatch.addEventListener("click", () => document.getElementById("modal-add-match-overlay").classList.remove("open"));
+            }
+
+            
+            // ==========================================================================
+            // AJUSTE CIRÚRGICO: ALTERNA A CLASSE E FORÇA A EXIBIÇÃO EM QUALQUER TELA
+            // ==========================================================================
+            const btnToggleMatchFilters = document.getElementById("btn-toggle-match-filters");
+            const matchAdvancedFilters = document.getElementById("match-advanced-filters");
+            if (btnToggleMatchFilters && matchAdvancedFilters) {
+                btnToggleMatchFilters.addEventListener("click", () => {
+                    const vaiAbrir = !matchAdvancedFilters.classList.contains("open");
+                    
+                    if (vaiAbrir) {
+                        matchAdvancedFilters.classList.add("open");
+                        matchAdvancedFilters.style.setProperty("display", "block", "important");
+                    } else {
+                        matchAdvancedFilters.classList.remove("open");
+                        matchAdvancedFilters.style.setProperty("display", "none", "important");
+                    }
+                });
+            }
+
+            const btnClearMatchFilters = document.getElementById("btn-clear-match-filters");
+            if(btnClearMatchFilters) {
+                btnClearMatchFilters.addEventListener("click", () => {
+                    selectedMatchTeamsFilter = [];
+                    selectedMatchGroupsFilter = [];
+                    selectedMatchStagesFilter = []; 
+                    if(filterMatchDate) filterMatchDate.value = "";
+                    
+                    if(document.getElementById("ms-match-teams-input")) document.getElementById("ms-match-teams-input").value = "";
+                    if(document.getElementById("ms-match-groups-input")) document.getElementById("ms-match-groups-input").value = "";
+                    if(document.getElementById("ms-match-stages-input")) document.getElementById("ms-match-stages-input").value = "";
+                    
+                    renderSelectedTags(); 
+                    applyMatchFilters();  
+                });
+            }
+
+            // =========================================================
+            // MODAL DE REGISTRAR SELEÇÃO
+            // =========================================================
+            const btnOpenTeamModal = document.getElementById("btn-open-team-modal");
+            if (btnOpenTeamModal) {
+                btnOpenTeamModal.addEventListener("click", () => {
+                    editingTeamId = null;
+                    formModalTeam.reset();
+                    document.getElementById("modal-team-id").disabled = false;
+                    document.getElementById("modal-team-title").innerHTML = '<i data-lucide="shield" style="color: var(--accent-color);"></i> Registrar Seleção';
+                    
+                    const flagLabel = document.getElementById("team-flag-label");
+                    if(flagLabel) flagLabel.innerHTML = '<i data-lucide="upload"></i> Escolher Bandeira';
+                    
+                    document.getElementById("modal-team-overlay").classList.add("open");
+                    if (window.lucide) lucide.createIcons();
+                });
+            }
+
+            const btnCloseTeamModal = document.getElementById("btn-close-team-modal");
+            if (btnCloseTeamModal) {
+                btnCloseTeamModal.addEventListener("click", () => {
+                    document.getElementById("modal-team-overlay").classList.remove("open");
+                });
+            }
+
+            // ==========================================================================
+            // DELEGAÇÃO DE EVENTOS: TABELA DE TIMES (EDITAR E GERENCIAR ELENCO)
+            // Coloque este bloco dentro da função setupGlobalEventListeners()
+            // ==========================================================================
+            const teamsTable = document.getElementById("teams-table");
+            if (teamsTable) {
+                teamsTable.addEventListener("click", (e) => {
+                    
+                    // AÇÃO 1: BOTÃO LÁPIS (EDITAR SELEÇÃO)
+                    const btnEditTeam = e.target.closest('.btn-edit-team');
+                    if (btnEditTeam) {
+                        const teamId = btnEditTeam.getAttribute("data-id");
+                        const team = globalTeams.find(t => t.id === teamId);
+                        
+                        if (team) {
+                            editingTeamId = team.id;
+                            
+                            // Preenche os campos do modal com os dados atuais
+                            document.getElementById("modal-team-id").value = team.id.toUpperCase();
+                            document.getElementById("modal-team-id").disabled = true; // Impede alterar a sigla (Primary Key)
+                            document.getElementById("modal-team-name").value = team.name;
+                            document.getElementById("modal-team-group").value = team.group;
+                            document.getElementById("modal-team-coach").value = team.coach || "";
+                            
+                            // Ajusta títulos e textos
+                            document.getElementById("modal-team-title").innerHTML = '<i data-lucide="edit" style="color: var(--accent-color);"></i> Editar Seleção';
+                            const flagLabel = document.getElementById("team-flag-label");
+                            if(flagLabel) flagLabel.innerHTML = '<i data-lucide="upload"></i> Alterar Bandeira';
+
+                            // Abre o modal
+                            document.getElementById("modal-team-overlay").classList.add("open");
+                            if (window.lucide) lucide.createIcons();
+                        }
+                        return;
+                    }
+
+                    // AÇÃO 2: BOTÃO USUÁRIOS (GERENCIAR ELENCO)
+                    const btnManagePlayers = e.target.closest('.btn-manage-players');
+                    if (btnManagePlayers) {
+                        const teamId = btnManagePlayers.getAttribute("data-id");
+                        const team = globalTeams.find(t => t.id === teamId);
+                        
+                        if (team) {
+                            managingPlayersTeamId = team.id;
+                            editingPlayerIdx = null; // Garante que não está editando um jogador anterior
+                            
+                            // Reseta o form de adicionar jogador
+                            document.getElementById("form-add-player").reset();
+                            document.getElementById("btn-submit-player").innerHTML = '<i data-lucide="plus"></i> Convocar Atleta';
+                            document.getElementById("btn-cancel-player-edit").style.display = "none";
+                            
+                            // Personaliza o título do modal com a bandeira e nome do time
+                            const titleText = team.flag 
+                                ? `<img src="${team.flag}" style="width: 26px; height: 18px; border-radius: 2px; vertical-align: middle; margin-right: 8px;"> Elenco: ${team.name}`
+                                : `<i data-lucide="users" style="color: var(--accent-color);"></i> Elenco: ${team.name}`;
+                                
+                            document.getElementById("modal-players-title").innerHTML = titleText;
+                            
+                            // Carrega a lista atual de jogadores deste time
+                            renderPlayersList(team); 
+                            
+                            // Abre o modal
+                            document.getElementById("modal-players-overlay").classList.add("open");
+                            if (window.lucide) lucide.createIcons();
+                        }
+                        return;
+                    }
+                });
+            }
+
+            // Fechar Modal de Elenco
+            const btnClosePlayersModal = document.getElementById("btn-close-players-modal");
+            if (btnClosePlayersModal) {
+                btnClosePlayersModal.addEventListener("click", () => {
+                    document.getElementById("modal-players-overlay").classList.remove("open");
+                    managingPlayersTeamId = null;
+                });
+            }
+
+            // ==========================================================================
+            // PAGINAÇÃO DA TABELA DE TIMES (DELEGAÇÃO GLOBAL)
+            // ==========================================================================
+            document.addEventListener("click", (e) => {
+                // Botão Próxima Página
+                const btnNext = e.target.closest("#btn-next-page");
+                if (btnNext && !btnNext.disabled) {
+                    teamsCurrentPage++;
+                    renderTeams();
+                    return;
+                }
+
+                // Botão Página Anterior
+                const btnPrev = e.target.closest("#btn-prev-page");
+                if (btnPrev && !btnPrev.disabled) {
+                    if (teamsCurrentPage > 1) {
+                        teamsCurrentPage--;
+                        renderTeams();
+                    }
+                    return;
+                }
+            });
+
+            // DELEGAÇÃO DE EVENTOS: TABELA DE USUÁRIOS
+            const usersTable = document.getElementById("users-table");
+            if (usersTable) {
+                usersTable.addEventListener("click", (e) => {
+                    const btnEditUser = e.target.closest('.btn-edit-user');
+                    if (btnEditUser) {
+                        const userId = btnEditUser.getAttribute("data-id");
+                        const user = globalUsers.find(u => u.id === userId);
+                        
+                        if (user) {
+                            editingUserId = user.id;
+                            currentSelectedUserForModal = user; // Guarda o usuário atual globalmente para o modal
+                            
+                            // Preenche os dados cadastrais
+                            document.getElementById("user-name-input").value = user.name || "";
+                            document.getElementById("user-email-input").value = user.email || "";
+                            document.getElementById("user-email-input").disabled = true;
+                            document.getElementById("user-password-group").style.display = "none";
+                            document.getElementById("user-role-input").value = user.role || "user";
+                            
+                            // Configurações de UI
+                            document.getElementById("modal-user-title").innerHTML = '<i data-lucide="edit" style="color: var(--accent-color);"></i> Editar Participante';
+                            const userFlagLabel = document.getElementById("user-file-label");
+                            if(userFlagLabel) userFlagLabel.innerHTML = '<i data-lucide="upload"></i> Alterar Foto';
+                            
+                            // Reseta botões e campos de inserção de pontos
+                            document.getElementById("user-points-adjustment-section").style.display = "block";
+                            const pointsContainer = document.getElementById("points-fields-container");
+                            if (pointsContainer) pointsContainer.style.display = "none";
+                            document.getElementById("user-points-delta").value = "";
+                            document.getElementById("user-points-comment").value = "";
+                            if (btnAddPoints) btnAddPoints.style.backgroundColor = "transparent";
+                            if (btnRemovePoints) btnRemovePoints.style.backgroundColor = "transparent";
+                            pointsAdjustmentAction = null;
+                            
+                            // DISPARA E EXIBE O HISTÓRICO DE PONTOS DESTE USUÁRIO IMEDIATAMENTE AO ABRIR
+                            renderUserPointsHistory(user);
+                            
+                            document.getElementById("modal-user-overlay").classList.add("open");
+                            if (window.lucide) lucide.createIcons();
+                        }
+                    }
+
+                    // ==========================================================================
+                    // PROCESSO IMEDIATO DE ADIÇÃO/SUBTRAÇÃO DE PONTOS E HISTÓRICO VISUAL
+                    // ==========================================================================
+                    const btnApplyPoints = document.getElementById("btn-apply-points");
+                    if (btnApplyPoints) {
+                        btnApplyPoints.addEventListener("click", async () => {
+                            if (!currentSelectedUserForModal || !pointsAdjustmentAction) return;
+
+                            const deltaInput = document.getElementById("user-points-delta");
+                            const commentInput = document.getElementById("user-points-comment");
+                            const deltaValue = parseInt(deltaInput.value) || 0;
+                            const comment = commentInput.value.trim() || "Ajuste manual da moderação";
+
+                            if (deltaValue <= 0) {
+                                showNotification("Por favor, insira uma quantidade válida de pontos.", "error");
+                                return;
+                            }
+
+                            let newPoints = currentSelectedUserForModal.points || 0;
+                            let historyLog = [];
+                            
+                            try {
+                                if (currentSelectedUserForModal.points_history) {
+                                    historyLog = typeof currentSelectedUserForModal.points_history === 'string' 
+                                        ? JSON.parse(currentSelectedUserForModal.points_history) 
+                                        : currentSelectedUserForModal.points_history;
+                                }
+                            } catch(e) { historyLog = []; }
+
+                            // Processa a operação matemática de forma segura
+                            if (pointsAdjustmentAction === "add") {
+                                newPoints += deltaValue;
+                            } else if (pointsAdjustmentAction === "remove") {
+                                newPoints = Math.max(0, newPoints - deltaValue);
+                            }
+
+                            // Cria o novo registro do Log
+                            const adjustment = {
+                                date: new Date().toLocaleString('pt-BR'),
+                                action: pointsAdjustmentAction,
+                                delta: deltaValue,
+                                comment: comment,
+                                admin: currentAdminData.name
+                            };
+                            historyLog.unshift(adjustment); // Adiciona no início da lista
+
+                            // Atualiza instantaneamente no Supabase apenas as colunas de pontuação
+                            const { error } = await supabase.from('users').update({
+                                points: newPoints,
+                                points_history: JSON.stringify(historyLog)
+                            }).eq('id', currentSelectedUserForModal.id);
+
+                            if (error) {
+                                console.error(error);
+                                showNotification("Erro ao atualizar pontos no banco de dados.", "error");
+                                return;
+                            }
+
+                            // Alinha o vetor global reativo para atualizar a tela principal
+                            currentSelectedUserForModal.points = newPoints;
+                            currentSelectedUserForModal.points_history = historyLog;
+
+                            // Renderiza o histórico e limpa os inputs imediatamente em tempo real
+                            renderUserPointsHistory(currentSelectedUserForModal);
+                            showNotification(`Pontos aplicados! Novo total: ${newPoints} pts`);
+
+                            deltaInput.value = "";
+                            commentInput.value = "";
+                            pointsContainer.style.display = "none";
+                            if (btnAddPoints) btnAddPoints.style.backgroundColor = "transparent";
+                            if (btnRemovePoints) btnRemovePoints.style.backgroundColor = "transparent";
+                            pointsAdjustmentAction = null;
+                        });
+                    }
+                });
+            }
+
+            if (btnAddPoints && btnRemovePoints && pointsContainer) {
+                btnAddPoints.addEventListener("click", () => {
+                    pointsAdjustmentAction = "add";
+                    pointsContainer.style.display = "block";
+                    pointsLabel.innerText = "Quantidade a Adicionar:";
+                    btnAddPoints.style.backgroundColor = "rgba(16, 185, 129, 0.2)";
+                    btnRemovePoints.style.backgroundColor = "transparent";
+                });
+
+                btnRemovePoints.addEventListener("click", () => {
+                    pointsAdjustmentAction = "remove";
+                    pointsContainer.style.display = "block";
+                    pointsLabel.innerText = "Quantidade a Remover:";
+                    btnRemovePoints.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
+                    btnAddPoints.style.backgroundColor = "transparent";
+                });
+            }
+        } 
+
+        function renderUserPointsHistory(user) {
+            const historyContainer = document.getElementById("user-points-history-list");
+            if (!historyContainer) return;
+            historyContainer.innerHTML = "";
+
+            let historyLog = [];
+            try {
+                if (user.points_history) {
+                    historyLog = typeof user.points_history === 'string' ? JSON.parse(user.points_history) : user.points_history;
+                }
+            } catch (e) { console.error("Erro ao ler histórico", e); }
+
+            if (historyLog.length === 0) {
+                historyContainer.innerHTML = `<div style="text-align:center; font-size: 0.8rem; color: var(--text-muted); padding: 1rem 0;">Nenhum ajuste manual registrado.</div>`;
+                return;
+            }
+
+            historyLog.forEach(log => {
+                const isAdd = log.action === "add";
+                const color = isAdd ? "var(--success-color)" : "var(--danger-color)";
+                const bg = isAdd ? "rgba(16, 185, 129, 0.05)" : "rgba(239, 68, 68, 0.05)";
+                const sign = isAdd ? "+" : "-";
+
+                historyContainer.innerHTML += `
+                    <div style="background: ${bg}; border: 1px solid ${color}; border-radius: 6px; padding: 0.6rem 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 0.8rem; font-weight: 700;">${escapeHTML(log.comment)}</div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted);">${escapeHTML(log.date)} • por ${escapeHTML(log.admin)}</div>
+                        </div>
+                        <div style="font-weight: 900; color: ${color}; font-size: 1.1rem;">
+                            ${sign}${log.delta}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        formModalUser.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("user-name-input").value.trim();
+            const email = document.getElementById("user-email-input").value.trim();
+            const role = document.getElementById("user-role-input").value;
+            const photoInput = document.getElementById("user-photo-input");
+
+            // Processa a imagem se houver
+            let photoData = null;
+            if (photoInput.files && photoInput.files[0]) {
+                photoData = await resizeImageFile(photoInput.files[0], 256, 256);
+            }
+
+            try {
+                if (editingUserId) {
+                    // ==========================================
+                    // MODO EDIÇÃO E AJUSTE DE PONTOS
+                    // ==========================================
+                    const user = globalUsers.find(u => u.id === editingUserId);
+                    let newPoints = user.points || 0;
+                    
+                    let historyLog = [];
+                    if (user.points_history) {
+                        historyLog = typeof user.points_history === 'string' ? JSON.parse(user.points_history) : user.points_history;
+                    }
+
+                    // Verifica se houve ajuste manual no formulário
+                    const deltaValue = parseInt(document.getElementById("user-points-delta").value) || 0;
+                    const comment = document.getElementById("user-points-comment").value.trim() || "Ajuste manual da moderação";
+
+                    if (pointsAdjustmentAction && deltaValue > 0) {
+                        const adjustment = {
+                            date: new Date().toLocaleString('pt-BR'),
+                            action: pointsAdjustmentAction,
+                            delta: deltaValue,
+                            comment: comment,
+                            admin: currentAdminData.name
+                        };
+
+                        if (pointsAdjustmentAction === "add") {
+                            newPoints += deltaValue;
+                        } else if (pointsAdjustmentAction === "remove") {
+                            newPoints = Math.max(0, newPoints - deltaValue); // Evita pontos negativos
+                        }
+                        
+                        historyLog.unshift(adjustment); // Coloca a ação mais recente no topo do array
+                    }
+
+                    // Monta o pacote de atualização
+                    const updatePayload = {
+                        name: name,
+                        role: role,
+                        points: newPoints,
+                        points_history: JSON.stringify(historyLog)
+                    };
+                    if (photoData) updatePayload.photo = photoData;
+
+                    const { error } = await supabase.from('users').update(updatePayload).eq('id', editingUserId);
+                    if (error) throw error;
+                    
+                    showNotification("Participante atualizado com sucesso!");
+
+                } else {
+                    // ==========================================
+                    // MODO CRIAÇÃO (Novo Participante)
+                    // ==========================================
+                    const password = document.getElementById("user-password-input").value;
+                    if (!password) return showNotification("A senha é obrigatória para novos participantes.", "error");
+
+                    const newUserData = {
+                        name: name,
+                        email: email,
+                        role: role,
+                        points: 0,
+                        points_history: [], // Array puro nativo
+                        password: password 
+                    };
+                    if (photoData) newUserData.photo = photoData;
+
+                    const { error } = await supabase.from('users').insert([newUserData]);
+                    if (error) throw error;
+
+                    showNotification("Novo participante registrado com sucesso!");
+                }
+
+                // Fecha modal e limpa seleções visuais
+                document.getElementById("modal-user-overlay").classList.remove("open");
+                if(btnAddPoints) btnAddPoints.style.backgroundColor = "transparent";
+                if(btnRemovePoints) btnRemovePoints.style.backgroundColor = "transparent";
+                pointsAdjustmentAction = null;
+
+            } catch (err) {
+                console.error(err);
+                showNotification("Erro ao processar dados do participante no banco.", "error");
+            }
+        });
+
+
+        // ==========================================================================
+        // SUBMIT DO FORMULÁRIO DE REGRAS DE PONTUAÇÃO (SALVAR NO BANCO)
+        // ==========================================================================
+        const formRules = document.getElementById("form-rules");
+        if (formRules) {
+            formRules.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                
+                const exactValue = parseInt(document.getElementById("rule-exact").value) || 0;
+                const winnerValue = parseInt(document.getElementById("rule-winner").value) || 0;
+
+                try {
+                    // Atualiza ou insere o valor do placar em cheio
+                    const { error: errExact } = await supabase.from('scoring_rules').upsert({ id: 'rule_exact', valor: exactValue });
+                    if (errExact) throw errExact;
+
+                    // text
+                    const { error: errWinner } = await supabase.from('scoring_rules').upsert({ id: 'rule_winner', valor: winnerValue });
+                    if (errWinner) throw errWinner;
+
+                    showNotification("Regras de pontuação atualizadas com sucesso!");
+                } catch (err) {
+                    console.error(err);
+                    showNotification("Erro ao salvar as novas regras no banco.", "error");
+                }
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const container = document.getElementById("toast-container");
+            if(!container) return;
+            const toast = document.createElement("div"); 
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span style="font-size:0.9rem; font-weight:600;">${escapeHTML(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ==========================================================================
+        // AÇÃO DE LOGOUT (ENCERRAR SESSÃO E VOLTAR PARA O LOGIN)
+        // ==========================================================================
+        document.querySelectorAll(".btn-logout-action").forEach(button => {
+            button.addEventListener("click", async () => {
+                try {
+                    // Encerra a sessão atual no Supabase por segurança
+                    await supabase.auth.signOut();
+                } catch (err) {
+                    console.error("Erro ao limpar sessão no Supabase:", err);
+                }
+                
+                // Redireciona o usuário para a página de login
+                window.location.href = "login.html";
+            });
+        });
+
+
+        // Inicializa a Aplicação
+        initApp();
+    </script>
+</body>
+</html>

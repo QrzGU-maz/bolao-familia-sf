@@ -1,0 +1,431 @@
+/* ==========================================================================
+VARIÁVEIS DE CORES - TEMA VERDE-GRAMADO PREMIUM
+========================================================================== */
+:root {
+    --bg-dark: #050806;       /* Preto profundo com tonalidade sutil de campo escuro */
+    --card-dark: #0c120e;     /* Verde floresta extremamente fechado para a modal */
+    --input-bg: #141e18;      /* Tom de gramado escuro para as entradas */
+    --input-border: #1d2e24;  /* Borda sutil em tom de linha de campo */
+    --text-main: #f8f9fa;     /* Branco confortável */
+    --text-muted: #94a3b8;    /* Cinza de suporte para labels */
+    --accent-color: #10b981;  /* Verde Gramado Vibrante (Emerald) */
+    --accent-hover: #059669;  /* Verde floresta interativo para hovers */
+    --error-color: #dc3545;   /* Vermelho para avisos e notificações de erro */
+    --success-color: #10b981; /* Verde esmeralda para sinalizar sucesso */
+}
+
+/* ==========================================================================
+ESTILOS GERAIS
+========================================================================== */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Estrutura de Ecrã Dividido Flexível */
+.login-wrapper {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+}
+
+/* ==========================================================================
+PAINEL ESQUERDO - GALERIA DE FOTOS HISTÓRICAS DO CARROSSEL
+========================================================================== */
+.login-left-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    background-color: var(--bg-dark);
+    overflow: hidden;
+}
+
+/* Configuração do Slideshow das Copas Passadas */
+.slideshow-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    filter: grayscale(10%) brightness(50%); /* Alta fidelidade das fotos originais */
+    transition: opacity 1.8s ease-in-out;
+}
+
+.slide.active {
+    opacity: 0.75; /* Alto realce para as imagens ficarem bem visíveis */
+}
+
+/* Fade sutil na base da tela esquerda */
+.bottom-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 250px;
+    background: linear-gradient(to top, var(--bg-dark) 0%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Placa Protetora Glassmorphism para legibilidade extrema das Copas de fundo */
+.logo-container {
+    text-align: center;
+    max-width: 520px;
+    position: relative;
+    z-index: 3;
+    background-color: rgba(5, 8, 6, 0.82); /* Verde escuro translúcido protetor */
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+}
+
+/* Título e Ícones Alinhados lado a lado */
+.logo-header-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.trophy-icon {
+    display: inline-flex;
+    padding: 0.8rem;
+    background-color: rgba(16, 185, 129, 0.15);
+    border-radius: 50%;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    animation: pulse-glow 3s infinite ease-in-out;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+    50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 25px rgba(16, 185, 129, 0.5);
+    }
+}
+
+.logo-container h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 40%, var(--accent-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.logo-container p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+/* ==========================================================================
+PAINEL DIREITO - FORMULÁRIO DE LOGIN E CONTROLES
+========================================================================== */
+.login-right-side {
+    width: 450px;
+    background-color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    z-index: 4;
+}
+
+/* Divisor Suave com Efeito Fade entre as divisões do site */
+.login-right-side::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 15%;
+    height: 70%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(16, 185, 129, 0.15) 30%, rgba(16, 185, 129, 0.15) 70%, transparent);
+    pointer-events: none;
+}
+
+/* Modal Arredondada Premium do Painel */
+.login-card {
+    width: 100%;
+    max-width: 360px;
+    background-color: var(--card-dark);
+    border: 1px solid rgba(16, 185, 129, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    border-color: rgba(16, 185, 129, 0.3);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 15px rgba(16, 185, 129, 0.08);
+}
+
+.login-header {
+    margin-bottom: 2rem;
+}
+
+.login-header h2 {
+    font-size: 1.4rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+.login-header p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Emblema do Estado da Autenticação - Ocultado por solicitação */
+.demo-badge {
+    display: none !important;
+}
+
+/* Container de Notificações da Modal */
+.alert-box {
+    padding: 0.9rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    line-height: 1.4;
+    transition: all 0.25s ease;
+}
+
+.alert-box.error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.25);
+    color: #f8d7da;
+}
+
+.alert-box.success {
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #d1e7dd;
+}
+
+.alert-box.info {
+    background-color: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    color: #cff4fc;
+}
+
+.alert-box svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Configuração de Inputs e Legendas */
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.form-group input {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    background-color: rgba(20, 30, 24, 0.8);
+}
+
+/* Olho de Mostrar/Ocultar Senha */
+.password-container {
+    position: relative;
+    display: flex;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 3rem;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.toggle-password-btn:hover {
+    color: var(--text-main);
+}
+
+.toggle-password-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Botão de Login Premium (Alinhado em minúsculas) */
+.btn-login {
+    width: 100%;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 0.9rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    text-transform: lowercase; /* Força o botão para "login" */
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.btn-login:hover {
+    background-color: var(--accent-hover);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+/* ==========================================================================
+REGRAS DE RESPONSIVIDADE (MEDIA QUERIES)
+========================================================================== */
+@media (max-width: 900px) {
+    .login-wrapper {
+        flex-direction: column;
+        overflow-y: auto;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 4.5rem 1.2rem 2.5rem 1.2rem; /* Mais espaçamento no topo para não cortar o troféu */
+        box-sizing: border-box;
+    }
+
+    /* Remove slideshow, imagens de fundo e fades no mobile */
+    .slideshow-container,
+    .bottom-fade,
+    .login-right-side::before {
+        display: none !important;
+    }
+
+    /* Título do Bolão limpo posicionado acima do formulário */
+    .login-left-side {
+        flex: none;
+        width: 100%;
+        max-width: 360px;
+        padding: 0;
+        margin-bottom: 2rem;
+        background-color: transparent;
+        display: block;
+        overflow: visible !important; /* Permite que o brilho e a pulsação do troféu se expandam sem cortes */
+    }
+
+    /* Título sem caixa de vidro (glassmorphism) no mobile */
+    .logo-container {
+        background-color: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        padding: 12px 0 0 0 !important; /* Espaçamento no topo para dar folga de segurança à animação do círculo */
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .logo-container h1 {
+        font-size: 1.85rem;
+    }
+
+    .logo-container p {
+        font-size: 0.95rem;
+    }
+
+    /* Container do login */
+    .login-right-side {
+        width: 100%;
+        max-width: 360px;
+        padding: 0;
+        background-color: transparent;
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+
+    /* MODAL PERFEITA NO MOBILE (Com fundo, bordas arredondadas e sombras) */
+    .login-card {
+        background-color: var(--card-dark) !important;
+        border: 1px solid rgba(16, 185, 129, 0.12) !important;
+        border-radius: 16px !important;
+        padding: 2rem 1.5rem !important;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+        box-sizing: border-box;
+        width: 100% !important;
+        transform: none !important;
+    }
+}
